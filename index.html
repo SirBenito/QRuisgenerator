@@ -18,21 +18,12 @@
                     colors: {
                         wgk: {
                             blue: '#00193c',
-                            yellow: '#ffc800',
+                            yellow: '#ffc300',
                             light: '#f4f7fb'
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(15px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
                     }
                 }
             }
@@ -43,262 +34,523 @@
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 
     <style>
-        body { background-color: #f4f7fb; }
-        .input-focus-ring:focus-within {
-            box-shadow: 0 0 0 3px rgba(0, 25, 60, 0.15);
+        /* Apple 2026 Glassmorphism Animatie & Effecten */
+        body {
+            margin: 0;
+            background-color: #f4f7fb;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(215, 100%, 90%, 1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(47, 100%, 85%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(215, 100%, 95%, 1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(47, 100%, 90%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 24px 48px -12px rgba(0, 25, 60, 0.1);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-input:focus-within {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 4px rgba(0, 25, 60, 0.1);
+            border-color: rgba(0, 25, 60, 0.2);
+            transform: scale(1.01);
+        }
+
+        .qr-container svg {
+            border-radius: 24px;
+            box-shadow: 0 16px 32px -8px rgba(0, 25, 60, 0.15);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .qr-container:hover svg {
+            transform: scale(1.04) translateY(-4px);
+        }
+
+        /* Blob Animations */
+        .blob {
+            position: absolute;
+            filter: blur(60px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -50px) scale(1.1); }
+        }
+
+        /* iOS Style Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
             border-color: #00193c;
         }
-        .qr-container canvas, .qr-container svg {
-            border-radius: 20px;
-            box-shadow: 0 12px 30px -10px rgba(0, 25, 60, 0.15);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #00193c;
         }
-        .qr-container:hover canvas, .qr-container:hover svg {
-            transform: scale(1.03);
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            border-color: white;
         }
+        
+        .color-swatch.active {
+            border: 2px solid #00193c;
+            transform: scale(1.1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        /* Modern Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 25, 60, 0.15);
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 25, 60, 0.3);
+        }
+
+        select { -webkit-appearance: none; appearance: none; }
     </style>
 </head>
-<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+<body class="text-gray-800 antialiased relative overflow-x-hidden flex flex-col items-center justify-center py-12">
 
-    <header class="bg-wgk-blue text-white shadow-md relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==')]"></div>
-        <div class="max-w-6xl mx-auto px-6 py-5 relative z-10 flex items-center gap-4">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md transform -rotate-3">
-                <i class="fa-solid fa-plus text-wgk-yellow text-2xl"></i>
+    <!-- Achtergrond elementen -->
+    <div class="blob bg-wgk-yellow w-96 h-96 rounded-full top-10 left-10" style="animation-delay: -2s;"></div>
+    <div class="blob bg-blue-300 w-96 h-96 rounded-full bottom-10 right-10" style="animation-duration: 12s;"></div>
+
+    <main class="w-full max-w-5xl px-6 relative z-10">
+        
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-white rounded-2xl shadow-lg mb-4 glass-panel transform rotate-3">
+                <i class="fa-solid fa-qrcode text-wgk-yellow text-3xl"></i>
             </div>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">Slimme QRuisgenerator</h1>
-                <p class="text-wgk-yellow text-xs font-medium">made by Benito</p>
-            </div>
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-wgk-blue">Slimme QR Generator</h1>
+            <p class="text-gray-500 mt-2 font-medium">Volledig personaliseerbaar. Drukklaar. Apple-stijl 2026.</p>
         </div>
-    </header>
 
-    <main class="flex-grow flex items-center justify-center p-4 md:p-8">
-        <div class="max-w-4xl w-full bg-white rounded-3xl shadow-xl overflow-hidden animate-fade-in-up flex flex-col md:flex-row">
+        <!-- Hoofd Container -->
+        <div class="glass-panel rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row p-2">
             
             <!-- Instellingen (Links) -->
-            <div class="w-full md:w-1/2 p-8 lg:p-10 border-b md:border-b-0 md:border-r border-gray-100 flex flex-col gap-8 justify-center">
-                <div>
-                    <h2 class="text-xl font-bold text-wgk-blue mb-1">QR Code Instellingen</h2>
-                    <p class="text-xs text-gray-500">De QR-code en het ingebouwde logo passen zich direct en live aan.</p>
-                </div>
-
+            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col gap-8 h-[75vh] overflow-y-auto custom-scrollbar">
+                
                 <!-- URL Input -->
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-2">
-                        <i class="fa-solid fa-link text-wgk-blue"></i> Bestemmingslink
-                    </label>
-                    <div class="border-2 border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3 input-focus-ring transition-colors bg-gray-50">
-                        <input type="text" id="urlInput" placeholder="Plak hier je link (bijv. https://...)" 
-                               class="bg-transparent border-none outline-none w-full text-sm text-gray-700 placeholder-gray-400"
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-500 ml-1">Bestemmingslink</label>
+                    <div class="glass-input rounded-2xl px-4 py-3 flex items-center gap-3">
+                        <i class="fa-solid fa-link text-wgk-blue opacity-50"></i>
+                        <input type="text" id="urlInput" placeholder="https://..." 
+                               class="bg-transparent border-none outline-none w-full text-base text-gray-800 placeholder-gray-400 font-medium"
                                value="https://www.witgelekruis.be">
                     </div>
                 </div>
 
-                <!-- Kleur Input -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-2">
-                        <i class="fa-solid fa-palette text-wgk-blue"></i> Kleur QR &amp; Logo
-                    </label>
+                <!-- Hoofdkleur -->
+                <div class="flex flex-col gap-3">
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-500 ml-1">Hoofdkleur</label>
                     <div class="flex items-center gap-4">
-                        <input type="color" id="colorInput" value="#00193c" 
-                               class="w-14 h-14 rounded-xl cursor-pointer border-2 border-gray-200 p-1 bg-white hover:scale-105 transition-transform">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-semibold text-gray-700" id="colorHex">#00193c</span>
-                            <span class="text-xs text-gray-400">Klik op het palet om te wijzigen</span>
+                        <div class="relative w-14 h-14 rounded-2xl overflow-hidden glass-input p-1 cursor-pointer group flex-shrink-0">
+                            <input type="color" id="mainColorInput" value="#00193c" 
+                                   class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
+                            <div id="mainColorPreview" class="w-full h-full rounded-xl" style="background-color: #00193c;"></div>
+                        </div>
+                        <div class="text-sm font-bold text-gray-800 uppercase" id="mainColorHex">#00193C</div>
+                    </div>
+                    <!-- Presets Main Color -->
+                    <div class="flex flex-wrap gap-2 mt-1" id="mainColorPresets">
+                        <!-- Genereerd via JS -->
+                    </div>
+                </div>
+
+                <!-- Achtergrond Toggle & Kleur -->
+                <div class="flex flex-col gap-3 p-4 bg-white/40 rounded-3xl border border-white/60">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-700 ml-1">Achtergrond toevoegen</label>
+                        <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" id="bgToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform duration-300 ease-in-out"/>
+                            <label for="bgToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-300 ease-in-out"></label>
+                        </div>
+                    </div>
+                    
+                    <div id="bgSettings" class="hidden flex-col gap-3 mt-2">
+                        <div class="flex items-center gap-4">
+                            <div class="relative w-14 h-14 rounded-2xl overflow-hidden glass-input p-1 cursor-pointer group flex-shrink-0">
+                                <input type="color" id="bgColorInput" value="#ffc300" 
+                                       class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
+                                <div id="bgColorPreview" class="w-full h-full rounded-xl" style="background-color: #ffc300;"></div>
+                            </div>
+                            <div class="text-sm font-bold text-gray-800 uppercase" id="bgColorHex">#FFC300</div>
+                        </div>
+                        <!-- Presets BG Color -->
+                        <div class="flex flex-wrap gap-2 mt-1" id="bgColorPresets">
+                            <!-- Genereerd via JS -->
                         </div>
                     </div>
                 </div>
+
+                <!-- Patroon & Hoeken -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-500 ml-1">Vorm QR Patroon</label>
+                        <div class="relative">
+                            <select id="dotsStyle" class="w-full glass-input rounded-2xl px-4 py-3 text-sm font-medium outline-none cursor-pointer pr-10">
+                                <option value="dots" selected>Stipjes</option>
+                                <option value="rounded">Afgerond</option>
+                                <option value="square">Vierkantjes</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-500 ml-1">Vorm Hoeken (Buiten)</label>
+                        <div class="relative">
+                            <select id="cornerOuterStyle" class="w-full glass-input rounded-2xl px-4 py-3 text-sm font-medium outline-none cursor-pointer pr-10">
+                                <option value="extra-rounded" selected>Extra Rond (Apple stijl)</option>
+                                <option value="rounded">Licht Rond</option>
+                                <option value="dot">Bolletjes</option>
+                                <option value="square">Klassiek Vierkant</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CMYK Toggle -->
+                <div class="flex flex-col p-4 bg-white/40 rounded-3xl border border-white/60">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-xs font-bold uppercase tracking-wider text-gray-700 ml-1 block">Exporteer in CMYK</label>
+                            <span class="text-[10px] text-gray-500 ml-1 block mt-0.5">Automatisch drukklaar (enkel SVG)</span>
+                        </div>
+                        <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" id="cmykToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform duration-300 ease-in-out"/>
+                            <label for="cmykToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-300 ease-in-out"></label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Preview & Download (Rechts) -->
-            <div class="w-full md:w-1/2 p-8 lg:p-10 bg-wgk-light flex flex-col items-center justify-center relative">
-                <div class="absolute top-6 right-6 flex gap-2">
-                    <span class="bg-wgk-yellow text-wgk-blue text-xs font-bold px-3 py-1 rounded-full shadow-sm">Live Preview</span>
+            <div class="w-full md:w-1/2 p-6 md:p-10 bg-white/30 rounded-[2rem] flex flex-col items-center justify-center relative border-l border-white/40">
+                <div class="absolute top-6 right-6">
+                    <span class="bg-wgk-yellow/20 text-yellow-700 border border-wgk-yellow/30 text-xs font-bold px-4 py-1.5 rounded-full backdrop-blur-md">
+                        <i class="fa-solid fa-bolt mr-1"></i> Live
+                    </span>
                 </div>
                 
                 <!-- QR Container -->
-                <div id="qrCodeContainer" class="qr-container bg-white p-5 rounded-3xl shadow-sm mb-8">
-                    <!-- QR code wordt hier gegenereerd -->
+                <div id="qrCodeContainer" class="qr-container p-2 mb-8 relative flex items-center justify-center min-h-[300px]">
+                    <!-- QR code SVG injectie -->
                 </div>
 
                 <!-- Download Knoppen -->
-                <div class="flex gap-4 w-full max-w-xs">
-                    <button id="downloadPng" class="flex-1 bg-wgk-blue hover:bg-[#002a5c] text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 text-sm">
-                        <i class="fa-solid fa-download"></i> PNG
+                <div class="flex gap-3 w-full max-w-sm">
+                    <button onclick="downloadCustomQR('png')" class="flex-1 bg-wgk-blue/90 hover:bg-wgk-blue text-white font-semibold py-3.5 px-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm backdrop-blur-md border border-white/10 relative group">
+                        <i class="fa-solid fa-image"></i> PNG
+                        <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-gray-500 font-normal pointer-events-none">PNG is altijd RGB</div>
                     </button>
-                    <button id="downloadSvg" class="flex-1 bg-white hover:bg-gray-50 border-2 border-wgk-blue text-wgk-blue font-semibold py-3 px-4 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 text-sm">
+                    <button onclick="downloadCustomQR('svg')" class="flex-1 bg-white/70 hover:bg-white text-wgk-blue font-semibold py-3.5 px-4 rounded-2xl shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm border border-wgk-blue/20 backdrop-blur-md">
                         <i class="fa-solid fa-vector-square"></i> SVG
                     </button>
                 </div>
             </div>
-
         </div>
     </main>
 
     <script>
-        // --- Dynamisch SVG-logo (Wit-Gele Kruis op basis van aangeleverde vector) ---
-        // Genereert live een base64 SVG-logo in de geselecteerde kleur
+        // --- Kleuren Data & CMYK Waarden ---
+        const WGK_COLORS = [
+            { name: 'WIT', hex: '#ffffff', cmyk: '0, 0, 0, 0' },
+            { name: 'BLAUW', hex: '#00193c', cmyk: '96, 80, 16, 6' },
+            { name: 'PAARS', hex: '#e1e1ff', cmyk: '10, 8, 0, 0' },
+            { name: 'LICHT BLAUW', hex: '#c8e6ff', cmyk: '15, 2, 0, 0' },
+            { name: 'GROEN', hex: '#e6f5a0', cmyk: '10, 0, 55, 0' },
+            { name: 'TAUPE', hex: '#f0e6dc', cmyk: '7, 10, 14, 0' },
+            { name: 'ROZE', hex: '#fa9187', cmyk: '0, 54, 41, 0' },
+            { name: 'GEEL TINT', hex: '#fff6dc', cmyk: '0, 3, 20, 0' },
+            { name: 'GEEL', hex: '#ffc300', cmyk: '0, 26, 94, 0' } // Standaard achtergrondkleur
+        ];
+
+        // --- SVG Logo Data (Het Kruis in het midden) ---
+        const wgkPathData = "M100.1,36.5v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1-1.4-3.1-3.1v-16.5c0-26,21.1-47.1,47.1-47.1h16.6c1.7,0,3.1,1.4,3.1,3.1ZM5.9,66.7c22.5,0,31-34.3,60.8-36.8V3.1c0-1.7-1.4-3.1-3.1-3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1H3.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7,1.4,3.1,3.1,3.1h2.8Z";
+        
         function getSvgLogo(color) {
-            const svgString = `<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100.1 100.1">
-              <path id="symbol_logo" fill="${color}" d="M100.1,36.5v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1-1.4-3.1-3.1v-16.5c0-26,21.1-47.1,47.1-47.1h16.6c1.7,0,3.1,1.4,3.1,3.1ZM5.9,66.7c22.5,0,31-34.3,60.8-36.8V3.1c0-1.7-1.4-3.1-3.1-3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1H3.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7,1.4,3.1,3.1,3.1h2.8Z"/>
-            </svg>`;
+            const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100.1 100.1"><path fill="${color}" d="${wgkPathData}"/></svg>`;
             return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
         }
         
         let qrCode = null;
         let typingTimer;
+        const QR_SIZE = 280;
+        const QR_MARGIN = 15; // Iets grotere marge zodat achtergrond ademt
 
         // UI Elementen
         const urlInput = document.getElementById('urlInput');
-        const colorInput = document.getElementById('colorInput');
-        const colorHex = document.getElementById('colorHex');
+        const mainColorInput = document.getElementById('mainColorInput');
+        const mainColorPreview = document.getElementById('mainColorPreview');
+        const mainColorHex = document.getElementById('mainColorHex');
+        const mainColorPresets = document.getElementById('mainColorPresets');
+        
+        const bgToggle = document.getElementById('bgToggle');
+        const bgSettings = document.getElementById('bgSettings');
+        const bgColorInput = document.getElementById('bgColorInput');
+        const bgColorPreview = document.getElementById('bgColorPreview');
+        const bgColorHex = document.getElementById('bgColorHex');
+        const bgColorPresets = document.getElementById('bgColorPresets');
+        
+        const dotsStyle = document.getElementById('dotsStyle');
+        const cornerOuterStyle = document.getElementById('cornerOuterStyle');
+        const cmykToggle = document.getElementById('cmykToggle');
         const qrContainer = document.getElementById('qrCodeContainer');
 
-        // Hoofdfunctie om de QR te updaten / genereren
+        // Initialiseer Kleur Presets
+        function initPresets(container, inputEl, previewEl, hexTextEl) {
+            WGK_COLORS.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = `w-8 h-8 rounded-full border border-gray-200 color-swatch transition-all`;
+                btn.style.backgroundColor = color.hex;
+                btn.title = color.name;
+                
+                btn.onclick = () => {
+                    inputEl.value = color.hex;
+                    updateQR();
+                };
+                container.appendChild(btn);
+            });
+        }
+        
+        initPresets(mainColorPresets, mainColorInput, mainColorPreview, mainColorHex);
+        initPresets(bgColorPresets, bgColorInput, bgColorPreview, bgColorHex);
+
+        function updateActiveSwatches() {
+            [mainColorPresets, bgColorPresets].forEach((container, idx) => {
+                const activeColor = idx === 0 ? mainColorInput.value.toLowerCase() : bgColorInput.value.toLowerCase();
+                Array.from(container.children).forEach(btn => {
+                    // RGB check omdat backgroundColor soms in rgb() wordt teruggegeven door de browser
+                    const hexFromRgb = rgbToHex(btn.style.backgroundColor);
+                    if (hexFromRgb === activeColor) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                });
+            });
+        }
+
+        function rgbToHex(rgb) {
+            if (rgb.startsWith('#')) return rgb.toLowerCase();
+            const rgbArr = rgb.match(/\d+/g);
+            if (!rgbArr) return '#ffffff';
+            return '#' + rgbArr.map(x => parseInt(x).toString(16).padStart(2, '0')).join('').toLowerCase();
+        }
+
+        // Hoofd QR Update Functie
         function updateQR() {
             const rawUrl = urlInput.value.trim() || "https://www.witgelekruis.be";
-            const color = colorInput.value;
-            colorHex.textContent = color.toUpperCase();
+            const mainColor = mainColorInput.value;
+            const isBgActive = bgToggle.checked;
+            const bgColor = isBgActive ? bgColorInput.value : "transparent";
+            const dotType = dotsStyle.value;
+            const outerStyle = cornerOuterStyle.value;
+            
+            // Update UI
+            mainColorHex.textContent = mainColor.toUpperCase();
+            mainColorPreview.style.backgroundColor = mainColor;
+            bgColorHex.textContent = bgColorInput.value.toUpperCase();
+            bgColorPreview.style.backgroundColor = bgColorInput.value;
+            bgSettings.style.display = isBgActive ? 'flex' : 'none';
+            updateActiveSwatches();
 
-            // Genereer het dynamic gekleurde logo
-            const logo = getSvgLogo(color);
+            const logoBase64 = getSvgLogo(mainColor);
+
+            const options = {
+                width: QR_SIZE,
+                height: QR_SIZE,
+                type: "svg",
+                data: rawUrl,
+                margin: QR_MARGIN,
+                qrOptions: { mode: "Byte", errorCorrectionLevel: "H" },
+                imageOptions: { hideBackgroundDots: true, imageSize: 0.35, margin: 8 },
+                dotsOptions: { color: mainColor, type: dotType },
+                backgroundOptions: { color: bgColor },
+                image: logoBase64,
+                cornersSquareOptions: { color: mainColor, type: outerStyle },
+                cornersDotOptions: { color: mainColor, type: "dot" } // Standaard ingesteld op 'dot' (stipje)
+            };
 
             if (!qrCode) {
-                // Eerste initialisatie van de QR-code styling library
-                qrCode = new QRCodeStyling({
-                    width: 260,
-                    height: 260,
-                    type: "svg", // Render direct als SVG in de DOM
-                    data: rawUrl,
-                    margin: 4,
-                    qrOptions: {
-                        typeNumber: 0,
-                        mode: "Byte",
-                        errorCorrectionLevel: "Q" // Nodig om het logo veilig in het midden te tonen
-                    },
-                    imageOptions: {
-                        hideBackgroundDots: true,
-                        imageSize: 0.35,
-                        margin: 5,
-                        crossOrigin: "anonymous",
-                    },
-                    dotsOptions: {
-                        color: color,
-                        type: "rounded" // Afgeronde QR-blokjes
-                    },
-                    backgroundOptions: {
-                        color: "#ffffff",
-                    },
-                    image: logo,
-                    cornersSquareOptions: {
-                        color: color,
-                        type: "extra-rounded" // Afgeronde buitenste hoeken
-                    },
-                    cornersDotOptions: {
-                        color: color,
-                        type: "dot"
-                    }
-                });
+                qrCode = new QRCodeStyling(options);
                 qrCode.append(qrContainer);
             } else {
-                // Real-time update van de QR-code met het nieuw gekleurde logo
-                qrCode.update({
-                    data: rawUrl,
-                    dotsOptions: {
-                        color: color
-                    },
-                    cornersSquareOptions: {
-                        color: color
-                    },
-                    cornersDotOptions: {
-                        color: color
-                    },
-                    image: logo
-                });
+                qrCode.update(options);
+            }
+
+            // Wacht op DOM render om afgeronde hoeken aan achtergrond toe te voegen & logo scherp te zetten
+            setTimeout(() => { postProcessSVG(mainColor, isBgActive); }, 50);
+        }
+
+        function postProcessSVG(mainColor, isBgActive) {
+            const svgEl = qrContainer.querySelector('svg');
+            if (!svgEl) return;
+
+            // 1. Zorg voor afgeronde hoeken op de achtergrond als deze actief is
+            const bgRect = svgEl.querySelector('rect[fill]');
+            if (bgRect) {
+                if (isBgActive) {
+                    bgRect.setAttribute('rx', '24');
+                    bgRect.setAttribute('ry', '24');
+                } else {
+                    bgRect.removeAttribute('rx');
+                    bgRect.removeAttribute('ry');
+                }
+            }
+
+            // 2. Centrum-logo altijd haarscherp maken via vector pad (Voorkomt base64 blur)
+            const oldCenter = svgEl.querySelector('#wgk-center-logo');
+            if (oldCenter) oldCenter.remove();
+
+            const imgEl = svgEl.querySelector('image');
+            if(imgEl) {
+                const imgX = imgEl.getAttribute('x');
+                const imgY = imgEl.getAttribute('y');
+                const imgW = imgEl.getAttribute('width');
+                
+                if (imgX && imgW && imgW !== "0") {
+                    const imgScale = parseFloat(imgW) / 100.1;
+                    const centerLogoPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    centerLogoPath.setAttribute("d", wgkPathData);
+                    centerLogoPath.setAttribute("fill", mainColor); 
+                    centerLogoPath.setAttribute("transform", `translate(${parseFloat(imgX)}, ${parseFloat(imgY)}) scale(${imgScale})`);
+                    
+                    const centerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    centerGroup.setAttribute("id", "wgk-center-logo");
+                    centerGroup.appendChild(centerLogoPath);
+                    svgEl.appendChild(centerGroup);
+                    
+                    imgEl.style.display = 'none'; 
+                }
             }
         }
 
-        // --- Event Listeners ---
-
-        // Debounce typ-vertraging
-        urlInput.addEventListener('input', () => {
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(updateQR, 150);
-        });
-
-        // Directe update bij kleurselectie
-        colorInput.addEventListener('input', updateQR);
-
-        // Download Acties
-        document.getElementById('downloadPng').addEventListener('click', () => {
-            if(qrCode) qrCode.download({ name: "wgk-qr-code", extension: "png" });
-        });
-
-        document.getElementById('downloadSvg').addEventListener('click', () => {
-            // Vind het live gegenereerde SVG element in de container
-            const svgEl = qrContainer.querySelector('svg');
+        // Converteer Hex naar CMYK-string voor SVG Export
+        function getCmykReplacement(hexColor) {
+            // Zoek in onze presets voor exacte waarden
+            const preset = WGK_COLORS.find(c => c.hex.toLowerCase() === hexColor.toLowerCase());
+            if (preset) {
+                return `device-cmyk(${preset.cmyk})`; 
+            }
             
-            if (svgEl) {
-                // Maak een kopie zodat we de actieve preview niet verstoren
-                const svgClone = svgEl.cloneNode(true);
-                const imgEl = svgClone.querySelector('image');
+            // Wiskundige benadering voor handmatige kleuren
+            let r = parseInt(hexColor.substring(1,3), 16) / 255;
+            let g = parseInt(hexColor.substring(3,5), 16) / 255;
+            let b = parseInt(hexColor.substring(5,7), 16) / 255;
+            let k = 1 - Math.max(r, g, b);
+            
+            if (k === 1) return 'device-cmyk(0, 0, 0, 100)';
+            
+            let c = Math.round(((1 - r - k) / (1 - k)) * 100);
+            let m = Math.round(((1 - g - k) / (1 - k)) * 100);
+            let y = Math.round(((1 - b - k) / (1 - k)) * 100);
+            
+            return `device-cmyk(${c}, ${m}, ${y}, ${Math.round(k*100)})`;
+        }
+
+        // Download Functie met CMYK injectie
+        function downloadCustomQR(type) {
+            const svgEl = qrContainer.querySelector('svg');
+            if (!svgEl) return;
+
+            const serializer = new XMLSerializer();
+            let svgString = serializer.serializeToString(svgEl);
+            
+            // CMYK Injectie logica (alleen zinvol voor SVG)
+            const isCmyk = cmykToggle.checked;
+            if (type === 'svg' && isCmyk) {
+                const mainHex = mainColorInput.value.toLowerCase();
+                const mainCmyk = getCmykReplacement(mainHex);
                 
-                // Als de library een <image> element heeft geplaatst voor ons logo, 
-                // vervangen we deze door een echt vector <g> element
-                if (imgEl) {
-                    const x = imgEl.getAttribute('x') || "81";
-                    const y = imgEl.getAttribute('y') || "81";
-                    const width = imgEl.getAttribute('width') || "98";
-                    const height = imgEl.getAttribute('height') || "98";
-                    
-                    // Bereken de schaalverhouding gebaseerd op de originele viewBox (0 0 100.1 100.1)
-                    const scaleX = parseFloat(width) / 100.1;
-                    const scaleY = parseFloat(height) / 100.1;
-                    const activeColor = colorInput.value;
-                    
-                    // Maak een nieuwe SVG-groep aan
-                    const logoGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                    logoGroup.setAttribute("transform", `translate(${x}, ${y}) scale(${scaleX}, ${scaleY})`);
-                    logoGroup.setAttribute("id", "wgk-logo-vector");
-                    
-                    // Maak het vectorpad aan van het Wit-Gele Kruis logo
-                    const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    pathEl.setAttribute("fill", activeColor);
-                    pathEl.setAttribute("d", "M100.1,36.5v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1-1.4-3.1-3.1v-16.5c0-26,21.1-47.1,47.1-47.1h16.6c1.7,0,3.1,1.4,3.1,3.1ZM5.9,66.7c22.5,0,31-34.3,60.8-36.8V3.1c0-1.7-1.4-3.1-3.1-3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1H3.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7,1.4,3.1,3.1,3.1h2.8Z");
-                    
-                    logoGroup.appendChild(pathEl);
-                    
-                    // Vervang de raster/base64 afbeelding door onze schone vectorgroep
-                    imgEl.parentNode.replaceChild(logoGroup, imgEl);
+                const hexRegex = new RegExp(mainHex, "gi");
+                svgString = svgString.replace(hexRegex, mainCmyk);
+
+                if (bgToggle.checked) {
+                    const bgHex = bgColorInput.value.toLowerCase();
+                    const bgCmyk = getCmykReplacement(bgHex);
+                    const bgRegex = new RegExp(bgHex, "gi");
+                    svgString = svgString.replace(bgRegex, bgCmyk);
                 }
-                
-                // Serialiseer de gekloonde SVG naar een XML-string
-                const serializer = new XMLSerializer();
-                let svgString = serializer.serializeToString(svgClone);
-                
-                // Voeg de XML-declaratie toe voor maximale compatibiliteit in editors (Illustrator, Inkscape etc)
-                if (!svgString.startsWith('<?xml')) {
-                    svgString = '<?xml version="1.0" standalone="no"?>\r\n' + svgString;
-                }
-                
-                // Exporteer en start download
+            }
+
+            if (!svgString.startsWith('<?xml')) {
+                svgString = '<?xml version="1.0" standalone="no"?>\r\n' + svgString;
+            }
+
+            if (type === 'svg') {
                 const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
                 const url = URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = "wgk-qr-code.svg";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                triggerDownload(url, `wgk-qr${isCmyk ? '-cmyk' : ''}.svg`);
                 URL.revokeObjectURL(url);
-            } else {
-                // Fallback naar de standaard bibliotheek download mocht de DOM SVG niet gevonden worden
-                if(qrCode) qrCode.download({ name: "wgk-qr-code", extension: "svg" });
+            } 
+            else if (type === 'png') {
+                // PNG Rendering
+                const canvas = document.createElement("canvas");
+                const scaleFactor = 4; 
+                canvas.width = QR_SIZE * scaleFactor;
+                canvas.height = QR_SIZE * scaleFactor;
+                const ctx = canvas.getContext("2d");
+
+                const img = new Image();
+                img.onload = function() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const pngUrl = canvas.toDataURL("image/png");
+                    triggerDownload(pngUrl, "wgk-qr.png");
+                };
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
             }
+        }
+
+        function triggerDownload(url, filename) {
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event Listeners
+        urlInput.addEventListener('input', () => {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(updateQR, 200);
         });
 
-        // Eerste opstart van de generator
+        mainColorInput.addEventListener('input', updateQR);
+        bgColorInput.addEventListener('input', updateQR);
+        bgToggle.addEventListener('change', updateQR);
+        dotsStyle.addEventListener('change', updateQR);
+        cornerOuterStyle.addEventListener('change', updateQR);
+
+        // Init
         updateQR();
 
     </script>
