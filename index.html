@@ -74,7 +74,6 @@
             transform: scale(1.02);
         }
 
-        /* Gefixte Smoother Toggle Switch */
         .toggle-checkbox:checked + .toggle-label {
             background-color: #00193c;
         }
@@ -82,7 +81,6 @@
             transform: translateX(24px);
         }
         
-        /* Color Swatches */
         .color-swatch {
             transition: transform 0.15s ease, border-width 0.15s ease;
         }
@@ -91,15 +89,14 @@
             transform: scale(1.15);
         }
 
-        /* Verberg scrollbars volledig */
         .hide-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
             overscroll-behavior-y: contain;
             -webkit-overflow-scrolling: touch;
         }
         .hide-scrollbar::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
+            display: none;
         }
 
         select { -webkit-appearance: none; appearance: none; }
@@ -121,7 +118,8 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
             
-            <div class="lg:col-span-7 bg-white rounded-[2rem] p-6 md:p-8 shadow-sm flex flex-col gap-8 lg:h-[620px] lg:overflow-y-auto hide-scrollbar relative border border-gray-100/50">
+            <!-- Configuratie Paneel -->
+            <div class="lg:col-span-7 bg-white rounded-[2rem] p-6 md:p-8 shadow-sm flex flex-col gap-8 lg:h-[680px] lg:overflow-y-auto hide-scrollbar relative border border-gray-100/50">
                 
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Bestemmingslink</label>
@@ -135,41 +133,48 @@
 
                 <hr class="border-gray-100">
 
-                <div class="flex flex-col gap-3">
-                    <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Hoofdkleur</label>
-                    <div class="flex items-center gap-4">
-                        <div class="relative w-14 h-14 rounded-2xl overflow-hidden border border-gray-200 cursor-pointer group flex-shrink-0">
-                            <input type="color" id="mainColorInput" value="#00193c" 
-                                   class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
-                            <div id="mainColorPreview" class="w-full h-full"></div>
-                        </div>
-                        <div class="text-sm font-bold text-wgk-blue font-title" id="mainColorHex">#00193C (BLAUW)</div>
-                    </div>
-                    <div class="flex flex-wrap gap-2.5 mt-2" id="mainColorPresets"></div>
-                </div>
-
-                <hr class="border-gray-100">
-
-                <div class="flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Achtergrond toevoegen</label>
-                        <div class="relative inline-block w-12 mr-2 align-middle select-none">
-                            <input type="checkbox" id="bgToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white appearance-none cursor-pointer z-10 opacity-0"/>
-                            <label for="bgToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-200 cursor-pointer transition-colors duration-300 ease-in-out relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:duration-300 after:ease-in-out"></label>
-                        </div>
-                    </div>
+                <!-- Kleur Instellingen in Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     
-                    <div id="bgSettings" class="hidden flex-col gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                        <div class="flex items-center gap-4">
-                            <div class="relative w-12 h-12 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group flex-shrink-0">
-                                <input type="color" id="bgColorInput" value="#ffc300" 
-                                       class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
-                                <div id="bgColorPreview" class="w-full h-full"></div>
+                    <!-- Patroon Kleur -->
+                    <div class="flex flex-col gap-3">
+                        <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title text-center sm:text-left">Kleur Patroon</label>
+                        <div class="flex flex-col items-center sm:items-start gap-2">
+                            <div class="relative w-14 h-14 rounded-2xl overflow-hidden border border-gray-200 cursor-pointer group flex-shrink-0">
+                                <input type="color" id="mainColorInput" value="#00193c" class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
+                                <div id="mainColorPreview" class="w-full h-full"></div>
                             </div>
-                            <div class="text-sm font-bold text-wgk-blue font-title" id="bgColorHex">#FFC300 (GEEL)</div>
+                            <div class="text-xs font-bold text-wgk-blue font-title text-center sm:text-left" id="mainColorHex">#00193C</div>
                         </div>
-                        <div class="flex flex-wrap gap-2.5 mt-1" id="bgColorPresets"></div>
+                        <div class="flex flex-wrap justify-center sm:justify-start gap-1.5" id="mainColorPresets"></div>
                     </div>
+
+                    <!-- Hoeken Kleur -->
+                    <div class="flex flex-col gap-3">
+                        <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title text-center sm:text-left">Kleur Hoeken</label>
+                        <div class="flex flex-col items-center sm:items-start gap-2">
+                            <div class="relative w-14 h-14 rounded-2xl overflow-hidden border border-gray-200 cursor-pointer group flex-shrink-0">
+                                <input type="color" id="cornerColorInput" value="#00193c" class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
+                                <div id="cornerColorPreview" class="w-full h-full"></div>
+                            </div>
+                            <div class="text-xs font-bold text-wgk-blue font-title text-center sm:text-left" id="cornerColorHex">#00193C</div>
+                        </div>
+                        <div class="flex flex-wrap justify-center sm:justify-start gap-1.5" id="cornerColorPresets"></div>
+                    </div>
+
+                    <!-- Kruis Kleur -->
+                    <div class="flex flex-col gap-3">
+                        <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title text-center sm:text-left">Kleur Kruis</label>
+                        <div class="flex flex-col items-center sm:items-start gap-2">
+                            <div class="relative w-14 h-14 rounded-2xl overflow-hidden border border-gray-200 cursor-pointer group flex-shrink-0">
+                                <input type="color" id="logoColorInput" value="#00193c" class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
+                                <div id="logoColorPreview" class="w-full h-full"></div>
+                            </div>
+                            <div class="text-xs font-bold text-wgk-blue font-title text-center sm:text-left" id="logoColorHex">#00193C</div>
+                        </div>
+                        <div class="flex flex-wrap justify-center sm:justify-start gap-1.5" id="logoColorPresets"></div>
+                    </div>
+
                 </div>
 
                 <hr class="border-gray-100">
@@ -200,9 +205,35 @@
                     </div>
                 </div>
 
+                <hr class="border-gray-100">
+
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Achtergrond toevoegen</label>
+                        <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                            <input type="checkbox" id="bgToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white appearance-none cursor-pointer z-10 opacity-0"/>
+                            <label for="bgToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-200 cursor-pointer transition-colors duration-300 ease-in-out relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:duration-300 after:ease-in-out"></label>
+                        </div>
+                    </div>
+                    
+                    <div id="bgSettings" class="hidden flex-col gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex flex-col sm:flex-row items-center gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="relative w-12 h-12 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group flex-shrink-0">
+                                    <input type="color" id="bgColorInput" value="#ffc300" class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
+                                    <div id="bgColorPreview" class="w-full h-full"></div>
+                                </div>
+                                <div class="text-sm font-bold text-wgk-blue font-title" id="bgColorHex">#FFC300</div>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5" id="bgColorPresets"></div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="lg:col-span-5 bg-white rounded-[2rem] p-8 shadow-sm flex flex-col items-center justify-between border border-gray-100/50 lg:h-[620px] sticky top-10">
+            <!-- Preview Paneel -->
+            <div class="lg:col-span-5 bg-white rounded-[2rem] p-8 shadow-sm flex flex-col items-center justify-between border border-gray-100/50 lg:h-[680px] sticky top-10">
 
                 <div class="w-full flex justify-between items-center mb-4">
                     <h2 class="font-bold text-lg text-wgk-blue font-title">Preview</h2>
@@ -212,9 +243,12 @@
                 </div>
                 
                 <div id="qrCodeContainer" class="qr-container p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 w-full flex items-center justify-center aspect-square mb-6">
-                    </div>
+                </div>
 
                 <div class="flex flex-col gap-3 w-full mt-auto">
+                    <button onclick="copyCustomQRToClipboard()" id="copyBtn" class="w-full bg-gray-100 text-wgk-blue font-bold py-3.5 px-6 rounded-full shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-sm font-title border border-gray-200">
+                        <i class="fa-regular fa-copy"></i> Kopieer naar klembord
+                    </button>
                     <button onclick="downloadCustomQR('png')" class="w-full bg-wgk-blue text-white font-bold py-3.5 px-6 rounded-full shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group text-sm font-title">
                         <i class="fa-solid fa-download"></i> Download PNG
                     </button>
@@ -226,34 +260,7 @@
         </div>
     </main>
 
-<footer class="w-full max-w-6xl mt-auto pt-8 border-t border-gray-200/40 flex flex-col md:flex-row items-center justify-between gap-6 pb-6 text-gray-500 text-xs select-none">
-    <div class="flex items-center gap-3">
-        <a href="https://www.witgelekruis.be" target="_blank" rel="noopener noreferrer" class="hover:opacity-85 active:scale-[0.98] transition-all duration-300 transform inline-block">
-            <svg id="WGK_logo" class="h-12 w-auto" viewBox="0 0 1372.53 671.35" xmlns="http://www.w3.org/2000/svg">
-                <g class="fill-[#ffc300]">
-                    <path d="M1003.25,578.79c.11-.17.3-.32.67-.52,7.26-5.3,12.98-12.41,17-21.14,4.01-8.71,6.04-18.67,6.04-29.61,0-12.3-2.43-23.45-7.22-33.12-4.8-9.7-11.71-17.36-20.54-22.75-8.82-5.39-19.06-8.13-30.42-8.13h-62.63c-1.18,0-2.21.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.04v196.92c0,1.19.42,2.21,1.25,3.03.83.83,1.85,1.25,3.04,1.25h41.36c1.18,0,2.2-.42,3.04-1.25.83-.83,1.25-1.85,1.25-3.04v-76.32c0-.53.13-.66.66-.66h4.37c.36,0,.57.09.69.57l19.81,77.19.01.03c.68,2.27,2.36,3.48,4.84,3.48h42.53c2.58,0,4-1.32,3.97-3.9l-25.4-86.1c-.03-.06-.08-.17-.04-.23ZM972.54,543.64c-2.98,3.72-6.87,5.53-11.91,5.53h-8.16c-.53,0-.66-.13-.66-.66v-41.36c0-.53.13-.66.66-.66h8.16c5.03,0,8.93,1.81,11.91,5.53,2.98,3.73,4.49,9.15,4.49,16.11,0,6.58-1.51,11.8-4.49,15.53Z"/>
-                    <path d="M842.51,555.64c.01-.24.06-.65.2-1.25l42.25-85.68c.69-1.62.71-2.91.06-3.84-.65-.89-1.79-1.35-3.41-1.35h-43.69c-2.25,0-3.91,1.07-4.8,3.08l-30.52,66.88c-.12.17-.21.29-.29.36,0-.06-.01-.13-.01-.21v-65.83c0-1.18-.42-2.2-1.26-3.04-.83-.83-1.86-1.25-3.03-1.25h-41.36c-1.18,0-2.21.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.04v196.92c0,1.19.42,2.21,1.25,3.04.83.83,1.85,1.25,3.04,1.25h41.36c1.18,0,2.2-.42,3.04-1.25.83-.83,1.25-1.85,1.25-3.04v-55.06c0-.81.11-1.2.21-1.39l5.19-10.4c.28-.42.47-.52.45-.54.01.01.09.08.19.39l26.21,68.13c.48,1.44,1.71,3.16,4.83,3.16h43.98c3.22,0,3.7-1.96,3.7-3.12,0-.9-.12-1.59-.35-2.05l-44.21-108.21Z"/>
-                    <path d="M1161.21,463.53h-41.37c-1.18,0-2.2.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.03v145.65c0,4.46-1.07,8.12-3.19,10.88-2.09,2.73-4.8,4.06-8.26,4.06s-6.17-1.33-8.26-4.06c-2.11-2.76-3.19-6.42-3.19-10.88v-145.65c0-1.18-.42-2.2-1.25-3.04-.83-.83-1.86-1.25-3.03-1.25h-41.37c-1.18,0-2.2.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.03v140.99c0,12.32,2.58,23.32,7.67,32.71,5.1,9.42,12.36,16.83,21.57,22.01,9.2,5.19,20.02,7.82,32.14,7.82s22.94-2.63,32.14-7.82c9.21-5.19,16.47-12.6,21.57-22.01,5.09-9.4,7.67-20.4,7.67-32.71v-140.99c0-1.18-.42-2.2-1.25-3.04-.83-.83-1.86-1.25-3.03-1.25Z"/>
-                    <path d="M1230.5,463.53h-41.36c-1.18,0-2.21.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.04v196.92c0,1.19.42,2.21,1.25,3.04.83.83,1.85,1.25,3.04,1.25h41.36c1.18,0,2.2-.42,3.04-1.25.83-.83,1.25-1.85,1.25-3.04v-196.92c0-1.18-.42-2.2-1.26-3.04-.83-.83-1.86-1.25-3.03-1.25Z"/>
-                    <path d="M1367.2,588.78c-3.52-6.95-8.48-13.34-14.74-19.02-6.2-5.61-15.53-13.08-27.74-22.19-10.01-7.31-16.73-12.96-19.97-16.77-3.16-3.71-4.76-7.95-4.76-12.59,0-4.27,1.02-7.73,3.03-10.29,1.99-2.54,4.55-3.77,7.83-3.77s5.95,1.24,8.14,3.8c2.19,2.56,3.31,5.92,3.31,9.97v8.16c0,1.19.42,2.21,1.25,3.04.83.83,1.85,1.25,3.04,1.25h40.49c1.18,0,2.2-.42,3.04-1.25.83-.83,1.25-1.85,1.25-3.04v-6.99c0-11.35-2.54-21.53-7.54-30.25-5-8.73-12.17-15.6-21.29-20.4-9.1-4.8-19.76-7.23-31.68-7.23s-22.28,2.38-31.38,7.08c-9.13,4.71-16.29,11.48-21.29,20.12-5,8.63-7.54,18.66-7.54,29.82s2.29,20.74,6.79,29.07c4.49,8.29,9.93,15.32,16.19,20.89,6.2,5.53,14.26,11.87,23.95,18.84,10.4,7.51,17.42,13.11,20.87,16.66,3.33,3.43,5.02,7.31,5.02,11.54,0,3.86-1.06,7.07-3.16,9.54-2.1,2.46-4.71,3.65-7.99,3.65s-5.89-1.24-7.98-3.79c-2.1-2.56-3.17-6.11-3.17-10.57v-6.7c0-1.18-.42-2.2-1.26-3.04-.83-.83-1.86-1.25-3.03-1.25h-40.78c-1.19,0-2.21.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.03v9.03c0,10.59,2.54,20.18,7.54,28.52,5.01,8.35,12.12,14.92,21.15,19.52,9.01,4.6,19.62,6.93,31.53,6.93,17.99,0,32.73-5.27,43.8-15.65,11.09-10.4,16.71-24.61,16.71-42.23,0-9.4-1.79-17.71-5.33-24.68Z"/>
-                    <path d="M1152.9,233c-.83.83-1.25,1.85-1.25,3.04v196.92c0,1.19.42,2.21,1.25,3.03.83.83,1.85,1.25,3.04,1.25h104.87c1.18,0,2.2-.42,3.03-1.25.83-.83,1.25-1.85,1.25-3.04v-34.37c0-1.18-.42-2.2-1.25-3.04-.83-.83-1.86-1.25-3.03-1.25h-58.55c-.53,0-.66-.13-.66-.66v-36.99c0-.53.13-.66.66-.66h32.04c1.18,0,2.21-.42,3.03-1.25.83-.83,1.25-1.85,1.25-3.04v-34.66c0-1.18-.42-2.2-1.25-3.03-.83-.83-1.85-1.25-3.03-1.25h-32.04c-.53,0-.66-.13-.66-.66v-36.7c0-.53.13-.66.66-.66h58.55c1.18,0,2.2-.42,3.03-1.25.83-.83,1.25-1.85,1.25-3.03v-34.37c0-1.18-.42-2.2-1.25-3.04-.83-.83-1.86-1.25-3.03-1.25h-104.87c-1.18,0-2.21.42-3.04,1.25Z"/>
-                    <path d="M903.26,233c-.83.83-1.25,1.85-1.25,3.04v196.92c0,1.19.42,2.21,1.25,3.03.83.83,1.85,1.25,3.04,1.25h104.87c1.18,0,2.2-.42,3.03-1.25.83-.83,1.25-1.85,1.25-3.04v-34.37c0-1.18-.42-2.2-1.25-3.04-.83-.83-1.86-1.25-3.03-1.25h-58.55c-.37,0-.66-.3-.66-.66v-36.99c0-.37.3-.66.66-.66h32.04c1.18,0,2.21-.42,3.03-1.25.83-.83,1.25-1.85,1.25-3.04v-34.66c0-1.18-.42-2.2-1.25-3.03-.83-.83-1.85-1.25-3.03-1.25h-32.04c-.37,0-.66-.3-.66-.66v-36.7c0-.37.3-.66.66-.66h58.55c1.18,0,2.2-.42,3.03-1.25.83-.83,1.25-1.85,1.25-3.03v-34.37c0-1.18-.42-2.2-1.25-3.04-.83-.83-1.86-1.25-3.03-1.25h-104.87c-1.18,0-2.21.42-3.04,1.25Z"/>
-                    <path d="M817.16,439.57c43.37,0,67.35-26.72,67.35-63.86v-48.56c0-2.34-1.89-4.23-4.23-4.23h-58.89c-2.34,0-4.23,1.89-4.23,4.23v30.99c0,2.34,1.89,4.23,4.23,4.23h12.52c.37,0,.66.3.66.66v12.67c0,9.6-3.7,20.91-17.41,20.91s-17.41-11.31-17.41-20.91v-82.44c0-9.6,3.7-20.91,17.41-20.91s17.41,11.31,17.41,20.91v5.45c0,2.34,1.89,4.23,4.23,4.23h41.48c2.34,0,4.23-1.89,4.23-4.23v-5.45c0-37.14-23.98-63.86-67.35-63.86s-67.35,26.72-67.35,63.86v82.44c0,37.14,23.98,63.86,67.35,63.86Z"/>
-                    <path d="M1135.16,435.99c.83-.83,1.25-1.85,1.25-3.04v-34.37c0-1.18-.42-2.2-1.26-3.04-.83-.83-1.86-1.25-3.03-1.25h-49.92c-.53,0-.66-.13-.66-.66v-157.59c0-1.18-.42-2.2-1.26-3.04-.83-.83-1.86-1.25-3.03-1.25h-41.36c-1.18,0-2.21.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.04v196.92c0,1.19.42,2.21,1.26,3.04.82.83,1.85,1.25,3.03,1.25h96.24c1.18,0,2.2-.42,3.04-1.25Z"/>
-                    <path d="M964.54,205.49h41.36c1.18,0,2.2-.42,3.04-1.25.83-.83,1.25-1.85,1.25-3.04V4.29c0-1.18-.42-2.2-1.26-3.04-.83-.83-1.86-1.25-3.03-1.25h-41.36c-1.18,0-2.21.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.04v196.92c0,1.19.42,2.21,1.26,3.04.82.83,1.85,1.25,3.03,1.25Z"/>
-                    <path d="M1065.54,43.61v157.59c0,1.19.42,2.21,1.25,3.04.83.83,1.85,1.25,3.04,1.25h41.37c1.18,0,2.2-.42,3.03-1.25.83-.83,1.25-1.85,1.25-3.04V43.61c0-.53.13-.66.66-.66h36.12c1.18,0,2.2-.42,3.04-1.25s1.25-1.85,1.25-3.03V4.29c0-1.18-.42-2.2-1.25-3.03l-.01-.01c-.83-.83-1.86-1.25-3.03-1.25h-122.05c-1.18,0-2.21.42-3.04,1.25-.83.83-1.25,1.85-1.25,3.04v34.37c0,1.19.42,2.21,1.25,3.03.83.83,1.85,1.26,3.04,1.26h34.66c.53,0,.66.13.66.66Z"/>
-                    <path d="M791.61,205.49h37.28c2.53,0,4.05-1.39,4.28-3.9l12.76-99.81c.06,0,.15,0,.24.2l14.56,99.58c.22,2.53,1.85,3.93,4.57,3.93h37.29c3.48,0,4.41-2.13,4.56-3.85l27.58-196.95c.23-1.5,0-2.67-.7-3.49-.69-.8-1.8-1.21-3.29-1.21h-41.95c-2.54,0-4.05,1.39-4.28,3.9l-11.89,95.44-14.5-95.42c-.23-2.53-1.86-3.92-4.58-3.92h-34.08c-2.72,0-4.35,1.39-4.58,3.89l-13.07,95.69c-.06.17-.11.26-.12.31-.03-.03-.06-.09-.09-.16l-13.1-95.8c-.23-2.53-1.86-3.92-4.58-3.92h-42.82c-3.48,0-4,2.14-3.97,3.61l.28,1.13,39.62,196.91c.46,2.52,2.03,3.85,4.56,3.85Z"/>
-                    <path d="M446.09,200.41V20.96c0-11.58-9.38-20.96-20.96-20.96H244.01c-11.58,0-20.96,9.38-20.96,20.96v181.06c0,11.58-9.38,20.96-20.96,20.96H20.96c-11.58,0-20.96,9.38-20.96,20.96v181.07c0,11.58,9.38,20.96,20.96,20.96h18.63c150.61,0,206.97-229.2,406.5-245.57Z"/>
-                    <path d="M648.18,222.99h-110.59c-173.72,0-314.54,140.83-314.54,314.54v110.53c0,11.58,9.38,20.96,20.96,20.96h181.12c11.58,0,20.96-9.38,20.96-20.96v-181.12c0-11.58,9.38-20.96,20.96-20.96h181.12c11.58,0,20.96-9.38,20.96-20.96v-181.06c0-11.58-9.38-20.96-20.96-20.96Z"/>
-                </g>
-            </svg>
-        </a>
-    </div>
-    <p class="font-medium text-wgk-blue">❤︎ Met liefde gemaakt door Benito en een vleugje AI.</p>
-</footer>
-
     <script>
-        // --- Kleuren Data met Geordende Volgorde en Labels ---
         const WGK_COLORS = [
             { name: 'WIT', hex: '#ffffff' },
             { name: 'GEEL', hex: '#ffc300' },
@@ -280,10 +287,21 @@
 
         // UI Elementen
         const urlInput = document.getElementById('urlInput');
+        
         const mainColorInput = document.getElementById('mainColorInput');
         const mainColorPreview = document.getElementById('mainColorPreview');
         const mainColorHex = document.getElementById('mainColorHex');
         const mainColorPresets = document.getElementById('mainColorPresets');
+
+        const cornerColorInput = document.getElementById('cornerColorInput');
+        const cornerColorPreview = document.getElementById('cornerColorPreview');
+        const cornerColorHex = document.getElementById('cornerColorHex');
+        const cornerColorPresets = document.getElementById('cornerColorPresets');
+
+        const logoColorInput = document.getElementById('logoColorInput');
+        const logoColorPreview = document.getElementById('logoColorPreview');
+        const logoColorHex = document.getElementById('logoColorHex');
+        const logoColorPresets = document.getElementById('logoColorPresets');
         
         const bgToggle = document.getElementById('bgToggle');
         const bgSettings = document.getElementById('bgSettings');
@@ -296,11 +314,10 @@
         const cornerOuterStyle = document.getElementById('cornerOuterStyle');
         const qrContainer = document.getElementById('qrCodeContainer');
 
-        // Initialiseer Kleur Presets
         function initPresets(container, inputEl) {
             WGK_COLORS.forEach(color => {
                 const btn = document.createElement('button');
-                btn.className = `w-7 h-7 rounded-full border border-gray-200 color-swatch`;
+                btn.className = `w-6 h-6 rounded-full border border-gray-200 color-swatch`;
                 btn.style.backgroundColor = color.hex;
                 btn.title = color.name;
                 
@@ -313,6 +330,8 @@
         }
         
         initPresets(mainColorPresets, mainColorInput);
+        initPresets(cornerColorPresets, cornerColorInput);
+        initPresets(logoColorPresets, logoColorInput);
         initPresets(bgColorPresets, bgColorInput);
 
         function getColorName(hex) {
@@ -321,9 +340,17 @@
         }
 
         function updateActiveSwatches() {
-            [mainColorPresets, bgColorPresets].forEach((container, idx) => {
-                const activeColor = idx === 0 ? mainColorInput.value.toLowerCase() : bgColorInput.value.toLowerCase();
-                Array.from(container.children).forEach(btn => {
+            const pickers = [
+                { presets: mainColorPresets, input: mainColorInput },
+                { presets: cornerColorPresets, input: cornerColorInput },
+                { presets: logoColorPresets, input: logoColorInput },
+                { presets: bgColorPresets, input: bgColorInput }
+            ];
+
+            pickers.forEach(p => {
+                if (!p.presets) return;
+                const activeColor = p.input.value.toLowerCase();
+                Array.from(p.presets.children).forEach(btn => {
                     const hexFromRgb = rgbToHex(btn.style.backgroundColor);
                     if (hexFromRgb === activeColor) btn.classList.add('active');
                     else btn.classList.remove('active');
@@ -338,24 +365,34 @@
             return '#' + rgbArr.map(x => parseInt(x).toString(16).padStart(2, '0')).join('').toLowerCase();
         }
 
-        // Hoofd QR Update Functie
         function updateQR() {
             const rawUrl = urlInput.value.trim() || "https://www.witgelekruis.be";
             const mainColor = mainColorInput.value;
+            const cornerColor = cornerColorInput.value;
+            const logoColor = logoColorInput.value;
+            
             const isBgActive = bgToggle.checked;
             const bgColor = isBgActive ? bgColorInput.value : "transparent";
+            
             const dotType = dotsStyle.value;
             const outerStyle = cornerOuterStyle.value;
             
-            // Update UI & Toegankelijke labels
+            // Update UI
             mainColorHex.textContent = `${mainColor.toUpperCase()}${getColorName(mainColor)}`;
             mainColorPreview.style.backgroundColor = mainColor;
+
+            cornerColorHex.textContent = `${cornerColor.toUpperCase()}${getColorName(cornerColor)}`;
+            cornerColorPreview.style.backgroundColor = cornerColor;
+
+            logoColorHex.textContent = `${logoColor.toUpperCase()}${getColorName(logoColor)}`;
+            logoColorPreview.style.backgroundColor = logoColor;
+
             bgColorHex.textContent = `${bgColorInput.value.toUpperCase()}${getColorName(bgColorInput.value)}`;
             bgColorPreview.style.backgroundColor = bgColorInput.value;
             bgSettings.style.display = isBgActive ? 'flex' : 'none';
             updateActiveSwatches();
 
-            const logoBase64 = getSvgLogo(mainColor);
+            const logoBase64 = getSvgLogo(logoColor);
 
             const options = {
                 width: QR_SIZE,
@@ -368,8 +405,8 @@
                 dotsOptions: { color: mainColor, type: dotType },
                 backgroundOptions: { color: bgColor },
                 image: logoBase64,
-                cornersSquareOptions: { color: mainColor, type: outerStyle },
-                cornersDotOptions: { color: mainColor, type: "dot" }
+                cornersSquareOptions: { color: cornerColor, type: outerStyle },
+                cornersDotOptions: { color: cornerColor, type: "dot" }
             };
 
             if (!qrCode) {
@@ -379,10 +416,10 @@
                 qrCode.update(options);
             }
 
-            setTimeout(() => { postProcessSVG(mainColor, isBgActive); }, 50);
+            setTimeout(() => { postProcessSVG(logoColor, isBgActive); }, 50);
         }
 
-        function postProcessSVG(mainColor, isBgActive) {
+        function postProcessSVG(logoColor, isBgActive) {
             const svgEl = qrContainer.querySelector('svg');
             if (!svgEl) return;
 
@@ -410,7 +447,7 @@
                     const imgScale = parseFloat(imgW) / 100.1;
                     const centerLogoPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     centerLogoPath.setAttribute("d", wgkPathData);
-                    centerLogoPath.setAttribute("fill", mainColor); 
+                    centerLogoPath.setAttribute("fill", logoColor); 
                     centerLogoPath.setAttribute("transform", `translate(${parseFloat(imgX)}, ${parseFloat(imgY)}) scale(${imgScale})`);
                     
                     const centerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -421,6 +458,54 @@
                     imgEl.style.display = 'none'; 
                 }
             }
+        }
+
+        function copyCustomQRToClipboard() {
+            const svgEl = qrContainer.querySelector('svg');
+            if (!svgEl) return;
+
+            // UI Feedback
+            const btn = document.getElementById('copyBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Gekopieerd!';
+            btn.classList.add('bg-green-600', 'text-white', 'border-green-600');
+            btn.classList.remove('bg-gray-100', 'text-wgk-blue', 'border-gray-200');
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('bg-green-600', 'text-white', 'border-green-600');
+                btn.classList.add('bg-gray-100', 'text-wgk-blue', 'border-gray-200');
+            }, 2000);
+
+            const serializer = new XMLSerializer();
+            let svgString = serializer.serializeToString(svgEl);
+
+            if (!svgString.startsWith('<?xml')) {
+                svgString = '<?xml version="1.0" standalone="no"?>\r\n' + svgString;
+            }
+
+            const canvas = document.createElement("canvas");
+            const scaleFactor = 4;
+            canvas.width = QR_SIZE * scaleFactor;
+            canvas.height = QR_SIZE * scaleFactor;
+            const ctx = canvas.getContext("2d");
+
+            const img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(function(blob) {
+                    try {
+                        navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                    } catch (err) {
+                        console.error("Clipboard Copy Failed:", err);
+                        alert("Kopiëren mislukt. Browser permissies belemmeren deze actie (HTTPS vereist).");
+                    }
+                }, 'image/png');
+            };
+            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
         }
 
         function downloadCustomQR(type) {
@@ -474,6 +559,9 @@
         });
 
         mainColorInput.addEventListener('input', updateQR);
+        cornerColorInput.addEventListener('input', updateQR);
+        logoColorInput.addEventListener('input', updateQR);
+        
         bgColorInput.addEventListener('input', updateQR);
         bgToggle.addEventListener('change', updateQR);
         dotsStyle.addEventListener('change', updateQR);
