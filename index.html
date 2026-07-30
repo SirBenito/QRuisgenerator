@@ -33,6 +33,8 @@
     </script>
 
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <style>
         @font-face {
@@ -128,6 +130,20 @@
                                class="bg-transparent border-none outline-none w-full text-base text-wgk-blue placeholder-gray-400 font-medium font-sans"
                                value="https://www.witgelekruis.be">
                     </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Bulk Generatie (Excel / CSV)</label>
+                    <p class="text-[13px] text-gray-500 mb-1 leading-relaxed">Upload een .xlsx of .csv bestand met kolomkoppen <strong class="font-semibold text-wgk-blue">Naam</strong> en <strong class="font-semibold text-wgk-blue">URL</strong>. Download direct een ZIP met alle ingestelde QR-codes in .png formaat.</p>
+                    <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center mt-1">
+                        <input type="file" id="bulkFileInput" accept=".csv, .xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-gray-100 file:text-wgk-blue hover:file:bg-gray-200 cursor-pointer transition-colors focus:outline-none">
+                        <button id="bulkGenerateBtn" class="hidden w-full sm:w-auto bg-wgk-blue text-white font-bold py-2.5 px-6 rounded-full shadow-sm hover:shadow-md transition-all text-sm font-title flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i class="fa-solid fa-file-zipper"></i> ZIP Downloaden
+                        </button>
+                    </div>
+                    <div id="bulkStatus" class="text-xs font-medium text-wgk-blue mt-1 hidden"></div>
                 </div>
 
                 <hr class="border-gray-100">
@@ -440,7 +456,7 @@
                 qrCode.update(options);
             }
 
-            setTimeout(() => { postProcessSVG(logoColor, isBgActive); }, 50);
+            setTimeout(() => { postProcessSVG(logoColor, isBgActive); }, 100);
         }
 
         function postProcessSVG(logoColor, isBgActive) {
@@ -479,7 +495,7 @@
                     centerGroup.appendChild(centerLogoPath);
                     svgEl.appendChild(centerGroup);
                     
-                    imgEl.style.display = 'none'; 
+                    imgEl.remove(); 
                 }
             }
         }
@@ -591,8 +607,232 @@
         dotsStyle.addEventListener('change', updateQR);
         cornerOuterStyle.addEventListener('change', updateQR);
 
-        // Init
         updateQR();
+
+        // === BULK GENERATIE LOGICA ===
+        const bulkFileInput = document.getElementById('bulkFileInput');
+        const bulkGenerateBtn = document.getElementById('bulkGenerateBtn');
+        const bulkStatus = document.getElementById('bulkStatus');
+        let bulkData = [];
+
+        bulkFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) {
+                bulkGenerateBtn.classList.add('hidden');
+                bulkStatus.classList.add('hidden');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    if (json.length > 0) {
+                        bulkData = json;
+                        bulkGenerateBtn.classList.remove('hidden');
+                        bulkStatus.classList.remove('hidden');
+                        bulkStatus.textContent = `${json.length} rijen gevonden. Klaar om te genereren.`;
+                        bulkStatus.className = "text-xs font-medium text-green-600 mt-1";
+                    } else {
+                        bulkData = [];
+                        bulkGenerateBtn.classList.add('hidden');
+                        bulkStatus.classList.remove('hidden');
+                        bulkStatus.textContent = "Geen geldige data gevonden in bestand.";
+                        bulkStatus.className = "text-xs font-medium text-red-600 mt-1";
+                    }
+                } catch (err) {
+                    bulkData = [];
+                    bulkGenerateBtn.classList.add('hidden');
+                    bulkStatus.classList.remove('hidden');
+                    bulkStatus.textContent = "Fout bij inlezen bestand.";
+                    bulkStatus.className = "text-xs font-medium text-red-600 mt-1";
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        async function generateSingleQRBlob(url, filename, options, logoColor, isBgActive) {
+            return new Promise((resolve) => {
+                const tempDiv = document.createElement('div');
+                tempDiv.style.position = 'absolute';
+                tempDiv.style.left = '-9999px';
+                tempDiv.style.visibility = 'hidden';
+                document.body.appendChild(tempDiv);
+                
+                const tempQr = new QRCodeStyling(options);
+                tempQr.append(tempDiv);
+                
+                setTimeout(() => {
+                    const svgEl = tempDiv.querySelector('svg');
+                    if (!svgEl) { 
+                        if(document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
+                        resolve(null); return; 
+                    }
+
+                    const bgRect = svgEl.querySelector('rect[fill]');
+                    if (bgRect) {
+                        if (isBgActive) {
+                            bgRect.setAttribute('rx', (24 * 4).toString());
+                            bgRect.setAttribute('ry', (24 * 4).toString());
+                        } else {
+                            bgRect.removeAttribute('rx');
+                            bgRect.removeAttribute('ry');
+                        }
+                    }
+
+                    const imgEl = svgEl.querySelector('image');
+                    if(imgEl) {
+                        const imgX = imgEl.getAttribute('x');
+                        const imgY = imgEl.getAttribute('y');
+                        const imgW = imgEl.getAttribute('width');
+                        
+                        if (imgX && imgW && imgW !== "0") {
+                            const imgScale = parseFloat(imgW) / 100.1;
+                            const centerLogoPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            centerLogoPath.setAttribute("d", wgkPathData);
+                            centerLogoPath.setAttribute("fill", logoColor); 
+                            centerLogoPath.setAttribute("transform", `translate(${parseFloat(imgX)}, ${parseFloat(imgY)}) scale(${imgScale})`);
+                            
+                            const centerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                            centerGroup.setAttribute("id", "wgk-center-logo");
+                            centerGroup.appendChild(centerLogoPath);
+                            svgEl.appendChild(centerGroup);
+                            imgEl.remove(); 
+                        }
+                    }
+
+                    const serializer = new XMLSerializer();
+                    let svgString = serializer.serializeToString(svgEl);
+                    if (!svgString.includes('xmlns="http://www.w3.org/2000/svg"')) {
+                        svgString = svgString.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+                    }
+                    if (!svgString.startsWith('<?xml')) {
+                        svgString = '<?xml version="1.0" encoding="utf-8"?>\n' + svgString;
+                    }
+
+                    const canvas = document.createElement("canvas");
+                    canvas.width = QR_SIZE * 4;
+                    canvas.height = QR_SIZE * 4;
+                    const ctx = canvas.getContext("2d");
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        canvas.toBlob(blob => {
+                            if(document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
+                            resolve({ filename, blob });
+                        }, 'image/png');
+                    };
+                    img.onerror = function(err) { 
+                        console.error('QR Render Error:', err);
+                        if(document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
+                        resolve(null); 
+                    };
+                    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+                }, 100);
+            });
+        }
+
+        bulkGenerateBtn.addEventListener('click', async function() {
+            if (bulkData.length === 0) return;
+            
+            bulkGenerateBtn.disabled = true;
+            bulkGenerateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bezig...';
+            
+            const zip = new JSZip();
+            
+            const mainColor = mainColorInput.value;
+            const cornerColor = cornerColorInput.value;
+            const logoColor = logoColorInput.value;
+            const isBgActive = bgToggle.checked;
+            const bgColor = isBgActive ? bgColorInput.value : "transparent";
+            const dotType = dotsStyle.value;
+            const outerStyle = cornerOuterStyle.value;
+            const logoBase64 = getSvgLogo(logoColor);
+
+            const nameCount = {};
+
+            for (let i = 0; i < bulkData.length; i++) {
+                const row = bulkData[i];
+                const keys = Object.keys(row);
+                const urlKey = keys.find(k => { const clean = String(k).toLowerCase().replace(/[^a-z0-9]/g, ''); return ['url', 'link', 'website'].includes(clean); });
+                const nameKey = keys.find(k => { const clean = String(k).toLowerCase().replace(/[^a-z0-9]/g, ''); return ['naam', 'name', 'bestand', 'titel'].includes(clean); });
+
+                if (urlKey && row[urlKey]) {
+                    const rawUrl = String(row[urlKey]).trim();
+                    let baseName = nameKey && row[nameKey] ? String(row[nameKey]).trim() : `qr_code_${i+1}`;
+                    baseName = baseName.replace(/[^a-z0-9_ -]/gi, '_'); 
+                    
+                    let filename = baseName;
+                    if (nameCount[filename]) {
+                        nameCount[baseName]++;
+                        filename = `${baseName}_${nameCount[baseName]}`;
+                    } else {
+                        nameCount[filename] = 1;
+                    }
+
+                    bulkStatus.textContent = `Bezig met genereren: ${filename} (${i+1}/${bulkData.length})...`;
+                    bulkStatus.className = "text-xs font-medium text-blue-600 mt-1";
+
+                    const options = {
+                        width: QR_SIZE * 4,
+                        height: QR_SIZE * 4,
+                        type: "svg",
+                        data: rawUrl,
+                        margin: QR_MARGIN * 4,
+                        qrOptions: { mode: "Byte", errorCorrectionLevel: "H" },
+                        imageOptions: { hideBackgroundDots: true, imageSize: 0.35, margin: 8 * 4 },
+                        dotsOptions: { color: mainColor, type: dotType },
+                        backgroundOptions: { color: bgColor },
+                        image: logoBase64,
+                        cornersSquareOptions: { color: cornerColor, type: outerStyle },
+                        cornersDotOptions: { color: cornerColor, type: "dot" }
+                    };
+
+                    const result = await generateSingleQRBlob(rawUrl, filename, options, logoColor, isBgActive);
+                    if (result && result.blob) {
+                        zip.file(`${result.filename}.png`, result.blob);
+                    }
+                }
+            }
+
+            if (Object.keys(zip.files).length === 0) {
+                bulkStatus.textContent = "Fout: Geen QR-codes gegenereerd. Check of kolommen 'Naam' en 'URL' correct staan.";
+                bulkStatus.className = "text-xs font-bold text-red-600 mt-1";
+                bulkGenerateBtn.disabled = false;
+                bulkGenerateBtn.innerHTML = '<i class="fa-solid fa-file-zipper"></i> ZIP Downloaden';
+                return;
+            }
+            
+            bulkStatus.textContent = "ZIP bestand samenstellen... Even geduld.";
+
+            try {
+                const content = await zip.generateAsync({type:"blob"});
+                const url = URL.createObjectURL(content);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "WGK_QRs_Bulk.zip";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                bulkStatus.textContent = `Klaar! ${Object.keys(zip.files).length} QR-codes gedownload.`;
+                bulkStatus.className = "text-xs font-medium text-green-600 mt-1";
+            } catch(e) {
+                console.error(e);
+                bulkStatus.textContent = "Fout bij maken ZIP.";
+                bulkStatus.className = "text-xs font-medium text-red-600 mt-1";
+            }
+
+            bulkGenerateBtn.disabled = false;
+            bulkGenerateBtn.innerHTML = '<i class="fa-solid fa-file-zipper"></i> ZIP Downloaden';
+        });
     </script>
 </body>
 </html>
