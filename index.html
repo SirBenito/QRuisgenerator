@@ -32,7 +32,7 @@
         }
     </script>
 
-    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
@@ -102,6 +102,12 @@
         }
 
         select { -webkit-appearance: none; appearance: none; }
+        
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
     </style>
 </head>
 <body class="antialiased py-10 px-4 md:px-8 flex flex-col items-center">
@@ -128,7 +134,7 @@
                         <i class="fa-solid fa-link text-gray-400 text-sm"></i>
                         <input type="text" id="urlInput" placeholder="https://..." 
                                class="bg-transparent border-none outline-none w-full text-base text-wgk-blue placeholder-gray-400 font-medium font-sans"
-                               value="https://www.witgelekruis.be">
+                               value="witgelekruis.be">
                     </div>
                 </div>
 
@@ -136,7 +142,7 @@
 
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Bulk Generatie (Excel / CSV)</label>
-                    <p class="text-[13px] text-gray-500 mb-1 leading-relaxed">Upload een .xlsx of .csv bestand met kolomkoppen <strong class="font-semibold text-wgk-blue">Naam</strong> en <strong class="font-semibold text-wgk-blue">URL</strong>. Download direct een ZIP met alle ingestelde QR-codes in .png formaat.</p>
+                    <p class="text-[13px] text-gray-500 mb-1 leading-relaxed">Upload een .xlsx of .csv bestand met kolomkoppen <strong class="font-semibold text-wgk-blue">Naam</strong> en <strong class="font-semibold text-wgk-blue">URL</strong>. Stel daarna de gewenste kleuren en vormen in, en klik vervolgens op <strong>ZIP Downloaden</strong> om alle QR-codes (2000x2000px) te genereren.</p>
                     <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center mt-1">
                         <input type="file" id="bulkFileInput" accept=".csv, .xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-gray-100 file:text-wgk-blue hover:file:bg-gray-200 cursor-pointer transition-colors focus:outline-none">
                         <button id="bulkGenerateBtn" class="hidden w-full sm:w-auto bg-wgk-blue text-white font-bold py-2.5 px-6 rounded-full shadow-sm hover:shadow-md transition-all text-sm font-title flex items-center justify-center gap-2 whitespace-nowrap">
@@ -151,7 +157,6 @@
                 <!-- Kleur Instellingen in Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     
-                    <!-- Patroon Kleur -->
                     <div class="flex flex-col gap-3">
                         <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title text-center sm:text-left">Kleur Patroon</label>
                         <div class="flex flex-col items-center sm:items-start gap-2">
@@ -164,7 +169,6 @@
                         <div class="flex flex-wrap justify-center sm:justify-start gap-1.5" id="mainColorPresets"></div>
                     </div>
 
-                    <!-- Hoeken Kleur -->
                     <div class="flex flex-col gap-3">
                         <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title text-center sm:text-left">Kleur Hoeken</label>
                         <div class="flex flex-col items-center sm:items-start gap-2">
@@ -177,15 +181,14 @@
                         <div class="flex flex-wrap justify-center sm:justify-start gap-1.5" id="cornerColorPresets"></div>
                     </div>
 
-                    <!-- Kruis Kleur -->
                     <div class="flex flex-col gap-3">
                         <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title text-center sm:text-left">Kleur Kruis</label>
                         <div class="flex flex-col items-center sm:items-start gap-2">
                             <div class="relative w-14 h-14 rounded-2xl overflow-hidden border border-gray-200 cursor-pointer group flex-shrink-0">
-                                <input type="color" id="logoColorInput" value="#00193c" class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
+                                <input type="color" id="logoColorInput" value="#ffc300" class="absolute inset-0 w-full h-20 -top-2 cursor-pointer opacity-0 z-10">
                                 <div id="logoColorPreview" class="w-full h-full"></div>
                             </div>
-                            <div class="text-xs font-bold text-wgk-blue font-title text-center sm:text-left" id="logoColorHex">#00193C</div>
+                            <div class="text-xs font-bold text-wgk-blue font-title text-center sm:text-left" id="logoColorHex">#FFC300</div>
                         </div>
                         <div class="flex flex-wrap justify-center sm:justify-start gap-1.5" id="logoColorPresets"></div>
                     </div>
@@ -200,7 +203,7 @@
                         <div class="relative">
                             <select id="dotsStyle" class="w-full wgk-input bg-gray-50/50 rounded-2xl px-4 py-3.5 text-sm font-medium outline-none cursor-pointer pr-10 text-wgk-blue">
                                 <option value="dots" selected>Stipjes</option>
-                                <option value="rounded">Afgerond</option>
+                                <option value="rounded">Afgerond (Verbonden)</option>
                                 <option value="square">Vierkantjes</option>
                             </select>
                             <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-wgk-blue pointer-events-none text-xs"></i>
@@ -208,14 +211,28 @@
                     </div>
                     
                     <div class="flex flex-col gap-2">
-                        <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Vorm Hoeken (Buiten)</label>
-                        <div class="relative">
-                            <select id="cornerOuterStyle" class="w-full wgk-input bg-gray-50/50 rounded-2xl px-4 py-3.5 text-sm font-medium outline-none cursor-pointer pr-10 text-wgk-blue">
-                                <option value="extra-rounded" selected>Afgerond</option>
-                                <option value="rounded">Rond</option>
-                                <option value="square">Vierkant</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-wgk-blue pointer-events-none text-xs"></i>
+                        <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Vorm Ogen (Wijst naar midden)</label>
+                        <div id="eyeTemplatesContainer" class="flex flex-wrap gap-2 mt-1">
+                            <!-- JS genereert hier interactieve templates -->
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2 sm:col-span-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-bold uppercase tracking-wider text-wgk-blue font-title">Schaal / Dikte Patroon</label>
+                            <input type="number" id="dotThicknessNum" min="0.3" max="1.5" step="0.05" value="0.7" class="w-16 bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs text-center font-bold text-wgk-blue outline-none focus:border-wgk-blue transition-colors">
+                        </div>
+                        <div class="flex items-center gap-4 bg-gray-50/50 rounded-2xl px-4 py-3.5 border border-gray-100">
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Fijn</span>
+                            <input type="range" id="dotThicknessRange" min="0.3" max="1.5" step="0.05" value="0.7" style="accent-color: #00193c;" class="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer transition-all">
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Dik</span>
+                        </div>
+                        <div class="flex gap-1.5 w-full mt-0.5">
+                            <button class="flex-1 py-1.5 rounded-md text-[11px] font-bold transition-all thickness-preset bg-gray-100 hover:bg-gray-200 text-wgk-blue" data-val="0.5">0.5</button>
+                            <button class="flex-1 py-1.5 rounded-md text-[11px] font-bold transition-all thickness-preset bg-wgk-blue text-white shadow-sm" data-val="0.7">0.7</button>
+                            <button class="flex-1 py-1.5 rounded-md text-[11px] font-bold transition-all thickness-preset bg-gray-100 hover:bg-gray-200 text-wgk-blue" data-val="0.9">0.9</button>
+                            <button class="flex-1 py-1.5 rounded-md text-[11px] font-bold transition-all thickness-preset bg-gray-100 hover:bg-gray-200 text-wgk-blue" data-val="1.0">1.0</button>
+                            <button class="flex-1 py-1.5 rounded-md text-[11px] font-bold transition-all thickness-preset bg-gray-100 hover:bg-gray-200 text-wgk-blue" data-val="1.1">1.1</button>
                         </div>
                     </div>
                 </div>
@@ -264,7 +281,7 @@
                         <i class="fa-regular fa-copy"></i> Kopieer naar klembord
                     </button>
                     <button onclick="downloadCustomQR('png')" class="w-full bg-wgk-blue text-white font-bold py-3.5 px-6 rounded-full shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group text-sm font-title">
-                        <i class="fa-solid fa-download"></i> Download PNG
+                        <i class="fa-solid fa-download"></i> Download PNG (2000x2000px)
                     </button>
                     <button onclick="downloadCustomQR('svg')" class="w-full bg-wgk-yellow text-wgk-blue font-bold py-3.5 px-6 rounded-full shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-sm font-title">
                         <i class="fa-solid fa-vector-square"></i> Download SVG (Vector)
@@ -313,46 +330,50 @@
             { name: 'GEEL TINT', hex: '#fff6dc' }
         ];
 
-        const wgkPathData = "M100.1,36.5v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1-1.4-3.1-3.1v-16.5c0-26,21.1-47.1,47.1-47.1h16.6c1.7,0,3.1,1.4,3.1,3.1ZM5.9,66.7c22.5,0,31-34.3,60.8-36.8V3.1c0-1.7-1.4-3.1-3.1-3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1H3.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7,1.4,3.1,3.1,3.1h2.8Z";
+        // 7 Standaard Templates voor Ogen / Finder Patterns 
+        const EYE_TEMPLATES = [
+            { id: 'square', corners: [0,0,0,0], rOuter: 0, rHole: 0, rDot: 0 },
+            { id: 'rounded', corners: [1,1,1,1], rOuter: 1.5, rHole: 0.5, rDot: 0.5 },
+            { id: 'circle', corners: [1,1,1,1], rOuter: 3.5, rHole: 2.5, rDot: 1.5 },
+            { id: 'pointer-circle', corners: [1,1,0,1], rOuter: 3.5, rHole: 2.5, rDot: 1.5 }, 
+            { id: 'pointer-square', corners: [1,1,0,1], rOuter: 1.5, rHole: 0.5, rDot: 0.5 }, 
+            { id: 'leaf', corners: [0,1,0,1], rOuter: 3.5, rHole: 2.5, rDot: 1.5 },   
+            { id: 'shield', corners: [1,1,0,0], rOuter: 3.5, rHole: 2.5, rDot: 1.5 }
+        ];
         
-        function getSvgLogo(color) {
-            const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100.1 100.1"><path fill="${color}" d="${wgkPathData}"/></svg>`;
-            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
-        }
-        
-        let qrCode = null;
+        let currentEyeTemplate = 4; // Standaard afgerond vierkant met pointer naar het midden
+        let currentSvgString = "";
         let typingTimer;
-        const QR_SIZE = 280;
-        const QR_MARGIN = 15;
 
-        // UI Elementen
+        const wgkPathData = "M100.1,36.5v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1h-27.1c-1.7,0-3.1-1.4-3.1-3.1v-16.5c0-26,21.1-47.1,47.1-47.1h16.6c1.7,0,3.1,1.4,3.1,3.1ZM5.9,66.7c22.5,0,31-34.3,60.8-36.8V3.1c0-1.7-1.4-3.1-3.1-3.1h-27.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7-1.4,3.1-3.1,3.1H3.1c-1.7,0-3.1,1.4-3.1,3.1v27.1c0,1.7,1.4,3.1,3.1,3.1h2.8Z";
+
+        // UI Elementen ophalen
         const urlInput = document.getElementById('urlInput');
-        
         const mainColorInput = document.getElementById('mainColorInput');
         const mainColorPreview = document.getElementById('mainColorPreview');
         const mainColorHex = document.getElementById('mainColorHex');
         const mainColorPresets = document.getElementById('mainColorPresets');
-
         const cornerColorInput = document.getElementById('cornerColorInput');
         const cornerColorPreview = document.getElementById('cornerColorPreview');
         const cornerColorHex = document.getElementById('cornerColorHex');
         const cornerColorPresets = document.getElementById('cornerColorPresets');
-
         const logoColorInput = document.getElementById('logoColorInput');
         const logoColorPreview = document.getElementById('logoColorPreview');
         const logoColorHex = document.getElementById('logoColorHex');
         const logoColorPresets = document.getElementById('logoColorPresets');
-        
         const bgToggle = document.getElementById('bgToggle');
         const bgSettings = document.getElementById('bgSettings');
         const bgColorInput = document.getElementById('bgColorInput');
         const bgColorPreview = document.getElementById('bgColorPreview');
         const bgColorHex = document.getElementById('bgColorHex');
         const bgColorPresets = document.getElementById('bgColorPresets');
-        
         const dotsStyle = document.getElementById('dotsStyle');
-        const cornerOuterStyle = document.getElementById('cornerOuterStyle');
+        
+        const dotThicknessRange = document.getElementById('dotThicknessRange');
+        const dotThicknessNum = document.getElementById('dotThicknessNum');
+        const thicknessPresetBtns = document.querySelectorAll('.thickness-preset');
         const qrContainer = document.getElementById('qrCodeContainer');
+        const eyeTemplatesContainer = document.getElementById('eyeTemplatesContainer');
 
         function initPresets(container, inputEl) {
             WGK_COLORS.forEach(color => {
@@ -360,11 +381,7 @@
                 btn.className = `w-6 h-6 rounded-full border border-gray-200 color-swatch`;
                 btn.style.backgroundColor = color.hex;
                 btn.title = color.name;
-                
-                btn.onclick = () => {
-                    inputEl.value = color.hex;
-                    updateQR();
-                };
+                btn.onclick = () => { inputEl.value = color.hex; updateQR(); };
                 container.appendChild(btn);
             });
         }
@@ -379,7 +396,244 @@
             return found ? ` (${found.name})` : '';
         }
 
-        function updateActiveSwatches() {
+        function rgbToHex(rgb) {
+            if (rgb.startsWith('#')) return rgb.toLowerCase();
+            const rgbArr = rgb.match(/\d+/g);
+            if (!rgbArr) return '#ffffff';
+            return '#' + rgbArr.map(x => parseInt(x).toString(16).padStart(2, '0')).join('').toLowerCase();
+        }
+
+        // ==============================================
+        // SVG PATH HELPER (Afgeronde polygonen bouwen)
+        // ==============================================
+        function getRoundRectPath(x, y, w, h, rArray) {
+            const [rtl, rtr, rbr, rbl] = rArray;
+            let d = `M ${x + rtl} ${y}`;
+            d += ` L ${x + w - rtr} ${y}`;
+            if (rtr > 0) d += ` A ${rtr} ${rtr} 0 0 1 ${x + w} ${y + rtr}`;
+            d += ` L ${x + w} ${y + h - rbr}`;
+            if (rbr > 0) d += ` A ${rbr} ${rbr} 0 0 1 ${x + w - rbr} ${y + h}`;
+            d += ` L ${x + rbl} ${y + h}`;
+            if (rbl > 0) d += ` A ${rbl} ${rbl} 0 0 1 ${x} ${y + h - rbl}`;
+            d += ` L ${x} ${y + rtl}`;
+            if (rtl > 0) d += ` A ${rtl} ${rtl} 0 0 1 ${x + rtl} ${y}`;
+            d += ' Z';
+            return d;
+        }
+
+        function generateEyeTemplateSvg(template, color, size = 40) {
+            const cellSize = size / 7;
+            const outerRadii = template.corners.map(v => v * template.rOuter * cellSize);
+            const holeRadii = template.corners.map(v => v * template.rHole * cellSize);
+            const dotRadii = template.corners.map(v => v * template.rDot * cellSize);
+
+            const outerPath = getRoundRectPath(0, 0, size, size, outerRadii);
+            const holePath = getRoundRectPath(cellSize, cellSize, 5*cellSize, 5*cellSize, holeRadii);
+            const dotPath = getRoundRectPath(2*cellSize, 2*cellSize, 3*cellSize, 3*cellSize, dotRadii);
+
+            return `<svg viewBox="-1 -1 ${size+2} ${size+2}" width="100%" height="100%">
+                <path d="${outerPath} ${holePath}" fill="${color}" fill-rule="evenodd" />
+                <path d="${dotPath}" fill="${color}" />
+            </svg>`;
+        }
+
+        function initEyeTemplatesUI() {
+            EYE_TEMPLATES.forEach((tmpl, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-11 h-11 p-1.5 rounded-[12px] border-2 transition-all group ${idx === currentEyeTemplate ? 'border-wgk-blue bg-blue-50/50 shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'}`;
+                
+                const svgColor = idx === currentEyeTemplate ? '#00193c' : '#9ca3af'; 
+                btn.innerHTML = `<div class="pointer-events-none transition-colors duration-200" style="fill:${svgColor}">${generateEyeTemplateSvg(tmpl, 'currentColor', 32)}</div>`;
+                
+                btn.onclick = () => {
+                    currentEyeTemplate = idx;
+                    Array.from(eyeTemplatesContainer.children).forEach((b, i) => {
+                        const isSelected = i === currentEyeTemplate;
+                        b.className = `w-11 h-11 p-1.5 rounded-[12px] border-2 transition-all group ${isSelected ? 'border-wgk-blue bg-blue-50/50 shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'}`;
+                        b.firstChild.style.fill = isSelected ? '#00193c' : '#9ca3af';
+                    });
+                    updateQR();
+                };
+                eyeTemplatesContainer.appendChild(btn);
+            });
+        }
+
+        function circlePath(cx, cy, r) {
+            return `M ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy} `;
+        }
+        function squarePath(cx, cy, w) {
+            return `M ${cx - w/2} ${cy - w/2} h ${w} v ${w} h -${w} Z `;
+        }
+
+        // ==============================================
+        // MAIN SVG RENDER ENGINE
+        // ==============================================
+        function generateCustomEngineSVG(url, mainColor, cornerColor, logoColor, dotType, eyeTemplate, isBgActive, bgColor, scaleFactor) {
+            const qr = qrcode(0, 'H'); 
+            qr.addData(url || "https://www.witgelekruis.be");
+            qr.make();
+            const count = qr.getModuleCount();
+            
+            const cellSize = 10;
+            const matrixSize = count * cellSize;
+            const margin = 20; 
+            const viewBoxSize = matrixSize + (margin * 2);
+
+            let svgPaths = [];
+
+            const isFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= count - 7) || (r >= count - 7 && c < 7);
+            
+            // EXACTE CUTOUT LOGICA (9x9 pixels)
+            const centerStart = Math.floor(count / 2) - 4; 
+            const centerEnd = Math.floor(count / 2) + 4;
+            const isLogoZone = (r, c) => r >= centerStart && r <= centerEnd && c >= centerStart && c <= centerEnd;
+            const isDark = (row, col) => row >= 0 && row < count && col >= 0 && col < count && qr.isDark(row, col) && !isFinder(row, col) && !isLogoZone(row, col);
+
+            // 1. Patroon Stipjes tekenen
+            let modulePaths = "";
+            for (let r = 0; r < count; r++) {
+                for (let c = 0; c < count; c++) {
+                    if (isDark(r, c)) {
+                        const cx = (c * cellSize) + (cellSize / 2) + margin;
+                        const cy = (r * cellSize) + (cellSize / 2) + margin;
+
+                        if (dotType === 'rounded') {
+                            const top = isDark(r-1, c);
+                            const bottom = isDark(r+1, c);
+                            const left = isDark(r, c-1);
+                            const right = isDark(r, c+1);
+
+                            const sz = cellSize * scaleFactor;
+                            const offset = (cellSize - sz) / 2;
+                            
+                            let startX = (cx - sz/2);
+                            let startY = (cy - sz/2);
+                            let w = sz;
+                            let h = sz;
+                            
+                            if (top) { startY -= offset; h += offset; }
+                            if (bottom) { h += offset; }
+                            if (left) { startX -= offset; w += offset; }
+                            if (right) { w += offset; }
+                            
+                            const roundAmt = sz * 0.5; 
+                            const rtl = (!top && !left) ? roundAmt : 0;
+                            const rtr = (!top && !right) ? roundAmt : 0;
+                            const rbr = (!bottom && !right) ? roundAmt : 0;
+                            const rbl = (!bottom && !left) ? roundAmt : 0;
+
+                            modulePaths += getRoundRectPath(startX, startY, w, h, [rtl, rtr, rbr, rbl]) + " ";
+                        } else if (dotType === 'dots') {
+                            modulePaths += circlePath(cx, cy, (cellSize/2)*scaleFactor);
+                        } else if (dotType === 'square') {
+                            modulePaths += squarePath(cx, cy, cellSize*scaleFactor);
+                        }
+                    }
+                }
+            }
+            svgPaths.push(`<path d="${modulePaths}" fill="${mainColor}" />`);
+
+            // 2. Finder Patterns (Ogen) tekenen en slim roteren
+            const drawFinderPattern = (startX, startY, rotationDeg) => {
+                const x = (startX * cellSize) + margin;
+                const y = (startY * cellSize) + margin;
+                const localCx = x + 3.5 * cellSize;
+                const localCy = y + 3.5 * cellSize;
+                
+                const outerRadii = eyeTemplate.corners.map(v => v * eyeTemplate.rOuter * cellSize);
+                const holeRadii = eyeTemplate.corners.map(v => v * eyeTemplate.rHole * cellSize);
+                const dotRadii = eyeTemplate.corners.map(v => v * eyeTemplate.rDot * cellSize);
+
+                const outerPath = getRoundRectPath(-3.5*cellSize, -3.5*cellSize, 7*cellSize, 7*cellSize, outerRadii);
+                const holePath = getRoundRectPath(-2.5*cellSize, -2.5*cellSize, 5*cellSize, 5*cellSize, holeRadii);
+                const dotPath = getRoundRectPath(-1.5*cellSize, -1.5*cellSize, 3*cellSize, 3*cellSize, dotRadii);
+
+                svgPaths.push(`<g transform="translate(${localCx}, ${localCy}) rotate(${rotationDeg})">
+                    <path d="${outerPath} ${holePath}" fill="${cornerColor}" fill-rule="evenodd" />
+                    <path d="${dotPath}" fill="${cornerColor}" />
+                </g>`);
+            };
+
+            drawFinderPattern(0, 0, 0);                 // Linksboven
+            drawFinderPattern(count - 7, 0, 90);        // Rechtsboven
+            drawFinderPattern(0, count - 7, -90);       // Linksonder
+
+            // 3. Achtergrond & Logo
+            let bgHtml = isBgActive ? `<rect x="0" y="0" width="${viewBoxSize}" height="${viewBoxSize}" fill="${bgColor}" rx="32" />` : '';
+
+            // EXACT 7x7 CELLS VOOR LOGO (laat 1 cel marge open in de 9x9 cutout)
+            const logoSize = cellSize * 7; 
+            const logoX = margin + (count * cellSize / 2) - (logoSize / 2);
+            const logoY = margin + (count * cellSize / 2) - (logoSize / 2);
+            const logoScale = logoSize / 100.1;
+
+            const logoSvg = `<g transform="translate(${logoX}, ${logoY}) scale(${logoScale})"><path fill="${logoColor}" d="${wgkPathData}"/></g>`;
+
+            return `<?xml version="1.0" standalone="no"?>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" width="100%" height="100%">
+                        ${bgHtml}
+                        ${svgPaths.join('\n')}
+                        ${logoSvg}
+                    </svg>`;
+        }
+
+        // ==============================================
+        // Dikte Constraints & Synchronisatie
+        // ==============================================
+        function updateThicknessConstraints() {
+            const isConnected = dotsStyle.value === 'rounded';
+            const minVal = isConnected ? 1.0 : 0.3;
+            
+            dotThicknessNum.min = minVal;
+            dotThicknessRange.min = minVal;
+            
+            let currentVal = parseFloat(dotThicknessRange.value);
+            if (currentVal < minVal) {
+                syncThickness(minVal);
+            }
+
+            thicknessPresetBtns.forEach(btn => {
+                const val = parseFloat(btn.dataset.val);
+                if (val < minVal) {
+                    btn.classList.add('opacity-30', 'cursor-not-allowed', 'pointer-events-none');
+                } else {
+                    btn.classList.remove('opacity-30', 'cursor-not-allowed', 'pointer-events-none');
+                }
+            });
+        }
+
+        function syncThickness(val) {
+            const isConnected = dotsStyle.value === 'rounded';
+            const minVal = isConnected ? 1.0 : 0.3;
+            let finalVal = parseFloat(val);
+            if (finalVal < minVal) finalVal = minVal;
+
+            dotThicknessRange.value = finalVal;
+            dotThicknessNum.value = finalVal;
+            
+            thicknessPresetBtns.forEach(b => {
+                if (parseFloat(b.dataset.val) === finalVal) {
+                    b.classList.add('bg-wgk-blue', 'text-white', 'shadow-sm');
+                    b.classList.remove('bg-gray-100', 'text-wgk-blue', 'hover:bg-gray-200');
+                } else {
+                    b.classList.add('bg-gray-100', 'text-wgk-blue', 'hover:bg-gray-200');
+                    b.classList.remove('bg-wgk-blue', 'text-white', 'shadow-sm');
+                }
+            });
+            updateQR();
+        }
+
+        function updateUIColors() {
+            mainColorHex.textContent = `${mainColorInput.value.toUpperCase()}${getColorName(mainColorInput.value)}`;
+            mainColorPreview.style.backgroundColor = mainColorInput.value;
+            cornerColorHex.textContent = `${cornerColorInput.value.toUpperCase()}${getColorName(cornerColorInput.value)}`;
+            cornerColorPreview.style.backgroundColor = cornerColorInput.value;
+            logoColorHex.textContent = `${logoColorInput.value.toUpperCase()}${getColorName(logoColorInput.value)}`;
+            logoColorPreview.style.backgroundColor = logoColorInput.value;
+            bgColorHex.textContent = `${bgColorInput.value.toUpperCase()}${getColorName(bgColorInput.value)}`;
+            bgColorPreview.style.backgroundColor = bgColorInput.value;
+            bgSettings.style.display = bgToggle.checked ? 'flex' : 'none';
+
             const pickers = [
                 { presets: mainColorPresets, input: mainColorInput },
                 { presets: cornerColorPresets, input: cornerColorInput },
@@ -398,113 +652,25 @@
             });
         }
 
-        function rgbToHex(rgb) {
-            if (rgb.startsWith('#')) return rgb.toLowerCase();
-            const rgbArr = rgb.match(/\d+/g);
-            if (!rgbArr) return '#ffffff';
-            return '#' + rgbArr.map(x => parseInt(x).toString(16).padStart(2, '0')).join('').toLowerCase();
-        }
-
         function updateQR() {
-            const rawUrl = urlInput.value.trim() || "https://www.witgelekruis.be";
-            const mainColor = mainColorInput.value;
-            const cornerColor = cornerColorInput.value;
-            const logoColor = logoColorInput.value;
-            
-            const isBgActive = bgToggle.checked;
-            const bgColor = isBgActive ? bgColorInput.value : "transparent";
-            
-            const dotType = dotsStyle.value;
-            const outerStyle = cornerOuterStyle.value;
-            
-            // Update UI
-            mainColorHex.textContent = `${mainColor.toUpperCase()}${getColorName(mainColor)}`;
-            mainColorPreview.style.backgroundColor = mainColor;
-
-            cornerColorHex.textContent = `${cornerColor.toUpperCase()}${getColorName(cornerColor)}`;
-            cornerColorPreview.style.backgroundColor = cornerColor;
-
-            logoColorHex.textContent = `${logoColor.toUpperCase()}${getColorName(logoColor)}`;
-            logoColorPreview.style.backgroundColor = logoColor;
-
-            bgColorHex.textContent = `${bgColorInput.value.toUpperCase()}${getColorName(bgColorInput.value)}`;
-            bgColorPreview.style.backgroundColor = bgColorInput.value;
-            bgSettings.style.display = isBgActive ? 'flex' : 'none';
-            updateActiveSwatches();
-
-            const logoBase64 = getSvgLogo(logoColor);
-
-            const options = {
-                width: QR_SIZE,
-                height: QR_SIZE,
-                type: "svg",
-                data: rawUrl,
-                margin: QR_MARGIN,
-                qrOptions: { mode: "Byte", errorCorrectionLevel: "H" },
-                imageOptions: { hideBackgroundDots: true, imageSize: 0.35, margin: 8 },
-                dotsOptions: { color: mainColor, type: dotType },
-                backgroundOptions: { color: bgColor },
-                image: logoBase64,
-                cornersSquareOptions: { color: cornerColor, type: outerStyle },
-                cornersDotOptions: { color: cornerColor, type: "dot" }
-            };
-
-            if (!qrCode) {
-                qrCode = new QRCodeStyling(options);
-                qrCode.append(qrContainer);
-            } else {
-                qrCode.update(options);
-            }
-
-            setTimeout(() => { postProcessSVG(logoColor, isBgActive); }, 100);
+            updateUIColors();
+            currentSvgString = generateCustomEngineSVG(
+                urlInput.value.trim(), 
+                mainColorInput.value, 
+                cornerColorInput.value, 
+                logoColorInput.value, 
+                dotsStyle.value, 
+                EYE_TEMPLATES[currentEyeTemplate], 
+                bgToggle.checked, 
+                bgColorInput.value, 
+                parseFloat(dotThicknessRange.value)
+            );
+            qrContainer.innerHTML = currentSvgString;
         }
 
-        function postProcessSVG(logoColor, isBgActive) {
-            const svgEl = qrContainer.querySelector('svg');
-            if (!svgEl) return;
-
-            const bgRect = svgEl.querySelector('rect[fill]');
-            if (bgRect) {
-                if (isBgActive) {
-                    bgRect.setAttribute('rx', '24');
-                    bgRect.setAttribute('ry', '24');
-                } else {
-                    bgRect.removeAttribute('rx');
-                    bgRect.removeAttribute('ry');
-                }
-            }
-
-            const oldCenter = svgEl.querySelector('#wgk-center-logo');
-            if (oldCenter) oldCenter.remove();
-
-            const imgEl = svgEl.querySelector('image');
-            if(imgEl) {
-                const imgX = imgEl.getAttribute('x');
-                const imgY = imgEl.getAttribute('y');
-                const imgW = imgEl.getAttribute('width');
-                
-                if (imgX && imgW && imgW !== "0") {
-                    const imgScale = parseFloat(imgW) / 100.1;
-                    const centerLogoPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    centerLogoPath.setAttribute("d", wgkPathData);
-                    centerLogoPath.setAttribute("fill", logoColor); 
-                    centerLogoPath.setAttribute("transform", `translate(${parseFloat(imgX)}, ${parseFloat(imgY)}) scale(${imgScale})`);
-                    
-                    const centerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                    centerGroup.setAttribute("id", "wgk-center-logo");
-                    centerGroup.appendChild(centerLogoPath);
-                    svgEl.appendChild(centerGroup);
-                    
-                    imgEl.remove(); 
-                }
-            }
-        }
-
+        // Download en Klembord (Resolutie gefixeerd op 2000x2000px)
         function copyCustomQRToClipboard() {
-            const svgEl = qrContainer.querySelector('svg');
-            if (!svgEl) return;
-
-            // UI Feedback
+            if (!currentSvgString) return;
             const btn = document.getElementById('copyBtn');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-check"></i> Gekopieerd!';
@@ -517,99 +683,70 @@
                 btn.classList.add('bg-gray-100', 'text-wgk-blue', 'border-gray-200');
             }, 2000);
 
-            const serializer = new XMLSerializer();
-            let svgString = serializer.serializeToString(svgEl);
-
-            if (!svgString.startsWith('<?xml')) {
-                svgString = '<?xml version="1.0" standalone="no"?>\r\n' + svgString;
-            }
-
             const canvas = document.createElement("canvas");
-            const scaleFactor = 4;
-            canvas.width = QR_SIZE * scaleFactor;
-            canvas.height = QR_SIZE * scaleFactor;
+            canvas.width = 2000; canvas.height = 2000;
             const ctx = canvas.getContext("2d");
-
             const img = new Image();
             img.onload = function() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height); 
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob(function(blob) {
-                    try {
-                        navigator.clipboard.write([
-                            new ClipboardItem({ 'image/png': blob })
-                        ]);
-                    } catch (err) {
-                        console.error("Clipboard Copy Failed:", err);
-                        alert("Kopiëren mislukt. Browser permissies belemmeren deze actie (HTTPS vereist).");
-                    }
+                canvas.toBlob(blob => {
+                    try { navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); } 
+                    catch (err) { alert("Kopiëren mislukt (browser restrictie)."); }
                 }, 'image/png');
             };
-            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(currentSvgString)));
         }
 
         function downloadCustomQR(type) {
-            const svgEl = qrContainer.querySelector('svg');
-            if (!svgEl) return;
-
-            const serializer = new XMLSerializer();
-            let svgString = serializer.serializeToString(svgEl);
-
-            if (!svgString.startsWith('<?xml')) {
-                svgString = '<?xml version="1.0" standalone="no"?>\r\n' + svgString;
-            }
-
+            if (!currentSvgString) return;
             if (type === 'svg') {
-                const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-                const url = URL.createObjectURL(blob);
+                const url = URL.createObjectURL(new Blob([currentSvgString], { type: "image/svg+xml;charset=utf-8" }));
                 triggerDownload(url, 'wgk-qr.svg');
                 URL.revokeObjectURL(url);
-            } 
-            else if (type === 'png') {
+            } else if (type === 'png') {
                 const canvas = document.createElement("canvas");
-                const scaleFactor = 4;
-                canvas.width = QR_SIZE * scaleFactor;
-                canvas.height = QR_SIZE * scaleFactor;
+                canvas.width = 2000; canvas.height = 2000;
                 const ctx = canvas.getContext("2d");
-
                 const img = new Image();
                 img.onload = function() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height); 
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    const pngUrl = canvas.toDataURL("image/png");
-                    triggerDownload(pngUrl, "wgk-qr.png");
+                    triggerDownload(canvas.toDataURL("image/png"), "wgk-qr.png");
                 };
-                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(currentSvgString)));
             }
         }
 
         function triggerDownload(url, filename) {
             const link = document.createElement("a");
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.href = url; link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
         // Event Listeners
-        urlInput.addEventListener('input', () => {
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(updateQR, 200);
-        });
-
+        urlInput.addEventListener('input', () => { clearTimeout(typingTimer); typingTimer = setTimeout(updateQR, 200); });
         mainColorInput.addEventListener('input', updateQR);
         cornerColorInput.addEventListener('input', updateQR);
         logoColorInput.addEventListener('input', updateQR);
-        
         bgColorInput.addEventListener('input', updateQR);
         bgToggle.addEventListener('change', updateQR);
-        dotsStyle.addEventListener('change', updateQR);
-        cornerOuterStyle.addEventListener('change', updateQR);
+        
+        dotsStyle.addEventListener('change', () => {
+            updateThicknessConstraints();
+            updateQR();
+        });
+        
+        dotThicknessRange.addEventListener('input', e => syncThickness(e.target.value));
+        dotThicknessNum.addEventListener('input', e => syncThickness(e.target.value));
+        thicknessPresetBtns.forEach(btn => btn.addEventListener('click', e => syncThickness(e.target.dataset.val)));
 
+        // Init
+        initEyeTemplatesUI();
+        updateThicknessConstraints();
         updateQR();
 
-        // === BULK GENERATIE LOGICA ===
+        // === BULK GENERATIE ===
         const bulkFileInput = document.getElementById('bulkFileInput');
         const bulkGenerateBtn = document.getElementById('bulkGenerateBtn');
         const bulkStatus = document.getElementById('bulkStatus');
@@ -617,219 +754,92 @@
 
         bulkFileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (!file) {
-                bulkGenerateBtn.classList.add('hidden');
-                bulkStatus.classList.add('hidden');
-                return;
-            }
-
+            if (!file) { bulkGenerateBtn.classList.add('hidden'); bulkStatus.classList.add('hidden'); return; }
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const json = XLSX.utils.sheet_to_json(worksheet);
-                    
+                    const workbook = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
+                    const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
                     if (json.length > 0) {
-                        bulkData = json;
-                        bulkGenerateBtn.classList.remove('hidden');
-                        bulkStatus.classList.remove('hidden');
+                        bulkData = json; bulkGenerateBtn.classList.remove('hidden'); bulkStatus.classList.remove('hidden');
                         bulkStatus.textContent = `${json.length} rijen gevonden. Klaar om te genereren.`;
                         bulkStatus.className = "text-xs font-medium text-green-600 mt-1";
-                    } else {
-                        bulkData = [];
-                        bulkGenerateBtn.classList.add('hidden');
-                        bulkStatus.classList.remove('hidden');
-                        bulkStatus.textContent = "Geen geldige data gevonden in bestand.";
-                        bulkStatus.className = "text-xs font-medium text-red-600 mt-1";
-                    }
+                    } else throw new Error();
                 } catch (err) {
-                    bulkData = [];
-                    bulkGenerateBtn.classList.add('hidden');
-                    bulkStatus.classList.remove('hidden');
-                    bulkStatus.textContent = "Fout bij inlezen bestand.";
+                    bulkData = []; bulkGenerateBtn.classList.add('hidden'); bulkStatus.classList.remove('hidden');
+                    bulkStatus.textContent = "Geen geldige data gevonden of fout bij inlezen.";
                     bulkStatus.className = "text-xs font-medium text-red-600 mt-1";
                 }
             };
             reader.readAsArrayBuffer(file);
         });
 
-        async function generateSingleQRBlob(url, filename, options, logoColor, isBgActive) {
+        function generateSingleQRBlobPromise(svgStr, filename) {
             return new Promise((resolve) => {
-                const tempDiv = document.createElement('div');
-                tempDiv.style.position = 'absolute';
-                tempDiv.style.left = '-9999px';
-                tempDiv.style.visibility = 'hidden';
-                document.body.appendChild(tempDiv);
-                
-                const tempQr = new QRCodeStyling(options);
-                tempQr.append(tempDiv);
-                
-                setTimeout(() => {
-                    const svgEl = tempDiv.querySelector('svg');
-                    if (!svgEl) { 
-                        if(document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
-                        resolve(null); return; 
-                    }
-
-                    const bgRect = svgEl.querySelector('rect[fill]');
-                    if (bgRect) {
-                        if (isBgActive) {
-                            bgRect.setAttribute('rx', (24 * 4).toString());
-                            bgRect.setAttribute('ry', (24 * 4).toString());
-                        } else {
-                            bgRect.removeAttribute('rx');
-                            bgRect.removeAttribute('ry');
-                        }
-                    }
-
-                    const imgEl = svgEl.querySelector('image');
-                    if(imgEl) {
-                        const imgX = imgEl.getAttribute('x');
-                        const imgY = imgEl.getAttribute('y');
-                        const imgW = imgEl.getAttribute('width');
-                        
-                        if (imgX && imgW && imgW !== "0") {
-                            const imgScale = parseFloat(imgW) / 100.1;
-                            const centerLogoPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                            centerLogoPath.setAttribute("d", wgkPathData);
-                            centerLogoPath.setAttribute("fill", logoColor); 
-                            centerLogoPath.setAttribute("transform", `translate(${parseFloat(imgX)}, ${parseFloat(imgY)}) scale(${imgScale})`);
-                            
-                            const centerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                            centerGroup.setAttribute("id", "wgk-center-logo");
-                            centerGroup.appendChild(centerLogoPath);
-                            svgEl.appendChild(centerGroup);
-                            imgEl.remove(); 
-                        }
-                    }
-
-                    const serializer = new XMLSerializer();
-                    let svgString = serializer.serializeToString(svgEl);
-                    if (!svgString.includes('xmlns="http://www.w3.org/2000/svg"')) {
-                        svgString = svgString.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
-                    }
-                    if (!svgString.startsWith('<?xml')) {
-                        svgString = '<?xml version="1.0" encoding="utf-8"?>\n' + svgString;
-                    }
-
-                    const canvas = document.createElement("canvas");
-                    canvas.width = QR_SIZE * 4;
-                    canvas.height = QR_SIZE * 4;
-                    const ctx = canvas.getContext("2d");
-                    const img = new Image();
-                    img.onload = function() {
-                        ctx.clearRect(0, 0, canvas.width, canvas.height); 
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        canvas.toBlob(blob => {
-                            if(document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
-                            resolve({ filename, blob });
-                        }, 'image/png');
-                    };
-                    img.onerror = function(err) { 
-                        console.error('QR Render Error:', err);
-                        if(document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
-                        resolve(null); 
-                    };
-                    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
-                }, 100);
+                const canvas = document.createElement("canvas");
+                canvas.width = 2000; canvas.height = 2000;
+                const ctx = canvas.getContext("2d");
+                const img = new Image();
+                img.onload = function() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob(blob => resolve({ filename, blob }), 'image/png');
+                };
+                img.onerror = () => resolve(null);
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgStr)));
             });
         }
 
         bulkGenerateBtn.addEventListener('click', async function() {
             if (bulkData.length === 0) return;
-            
             bulkGenerateBtn.disabled = true;
             bulkGenerateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bezig...';
             
             const zip = new JSZip();
-            
-            const mainColor = mainColorInput.value;
-            const cornerColor = cornerColorInput.value;
-            const logoColor = logoColorInput.value;
-            const isBgActive = bgToggle.checked;
-            const bgColor = isBgActive ? bgColorInput.value : "transparent";
-            const dotType = dotsStyle.value;
-            const outerStyle = cornerOuterStyle.value;
-            const logoBase64 = getSvgLogo(logoColor);
-
             const nameCount = {};
 
             for (let i = 0; i < bulkData.length; i++) {
                 const row = bulkData[i];
                 const keys = Object.keys(row);
-                const urlKey = keys.find(k => { const clean = String(k).toLowerCase().replace(/[^a-z0-9]/g, ''); return ['url', 'link', 'website'].includes(clean); });
-                const nameKey = keys.find(k => { const clean = String(k).toLowerCase().replace(/[^a-z0-9]/g, ''); return ['naam', 'name', 'bestand', 'titel'].includes(clean); });
+                const urlKey = keys.find(k => { const c = String(k).toLowerCase().replace(/[^a-z0-9]/g, ''); return ['url', 'link', 'website'].includes(c); });
+                const nameKey = keys.find(k => { const c = String(k).toLowerCase().replace(/[^a-z0-9]/g, ''); return ['naam', 'name', 'bestand', 'titel'].includes(c); });
 
                 if (urlKey && row[urlKey]) {
                     const rawUrl = String(row[urlKey]).trim();
-                    let baseName = nameKey && row[nameKey] ? String(row[nameKey]).trim() : `qr_code_${i+1}`;
-                    baseName = baseName.replace(/[^a-z0-9_ -]/gi, '_'); 
-                    
-                    let filename = baseName;
-                    if (nameCount[filename]) {
-                        nameCount[baseName]++;
-                        filename = `${baseName}_${nameCount[baseName]}`;
-                    } else {
-                        nameCount[filename] = 1;
-                    }
+                    let baseName = nameKey && row[nameKey] ? String(row[nameKey]).trim().replace(/[^a-z0-9_ -]/gi, '_') : `qr_code_${i+1}`;
+                    let filename = nameCount[baseName] ? `${baseName}_${++nameCount[baseName]}` : (nameCount[baseName]=1, baseName);
 
                     bulkStatus.textContent = `Bezig met genereren: ${filename} (${i+1}/${bulkData.length})...`;
                     bulkStatus.className = "text-xs font-medium text-blue-600 mt-1";
 
-                    const options = {
-                        width: QR_SIZE * 4,
-                        height: QR_SIZE * 4,
-                        type: "svg",
-                        data: rawUrl,
-                        margin: QR_MARGIN * 4,
-                        qrOptions: { mode: "Byte", errorCorrectionLevel: "H" },
-                        imageOptions: { hideBackgroundDots: true, imageSize: 0.35, margin: 8 * 4 },
-                        dotsOptions: { color: mainColor, type: dotType },
-                        backgroundOptions: { color: bgColor },
-                        image: logoBase64,
-                        cornersSquareOptions: { color: cornerColor, type: outerStyle },
-                        cornersDotOptions: { color: cornerColor, type: "dot" }
-                    };
+                    const generatedSvg = generateCustomEngineSVG(
+                        rawUrl, mainColorInput.value, cornerColorInput.value, logoColorInput.value, 
+                        dotsStyle.value, EYE_TEMPLATES[currentEyeTemplate], bgToggle.checked, 
+                        bgColorInput.value, parseFloat(dotThicknessRange.value)
+                    );
 
-                    const result = await generateSingleQRBlob(rawUrl, filename, options, logoColor, isBgActive);
-                    if (result && result.blob) {
-                        zip.file(`${result.filename}.png`, result.blob);
-                    }
+                    const result = await generateSingleQRBlobPromise(generatedSvg, filename);
+                    if (result && result.blob) zip.file(`${result.filename}.png`, result.blob);
                 }
             }
 
             if (Object.keys(zip.files).length === 0) {
-                bulkStatus.textContent = "Fout: Geen QR-codes gegenereerd. Check of kolommen 'Naam' en 'URL' correct staan.";
+                bulkStatus.textContent = "Fout: Geen QR-codes gegenereerd. Check kolomnamen.";
                 bulkStatus.className = "text-xs font-bold text-red-600 mt-1";
-                bulkGenerateBtn.disabled = false;
-                bulkGenerateBtn.innerHTML = '<i class="fa-solid fa-file-zipper"></i> ZIP Downloaden';
-                return;
+            } else {
+                bulkStatus.textContent = "ZIP bestand samenstellen... Even geduld.";
+                try {
+                    const content = await zip.generateAsync({type:"blob"});
+                    const url = URL.createObjectURL(content);
+                    triggerDownload(url, "WGK_QRs_Bulk.zip");
+                    URL.revokeObjectURL(url);
+                    bulkStatus.textContent = `Klaar! ${Object.keys(zip.files).length} QR-codes gedownload.`;
+                    bulkStatus.className = "text-xs font-medium text-green-600 mt-1";
+                } catch(e) {
+                    bulkStatus.textContent = "Fout bij maken ZIP.";
+                    bulkStatus.className = "text-xs font-medium text-red-600 mt-1";
+                }
             }
-            
-            bulkStatus.textContent = "ZIP bestand samenstellen... Even geduld.";
-
-            try {
-                const content = await zip.generateAsync({type:"blob"});
-                const url = URL.createObjectURL(content);
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = "WGK_QRs_Bulk.zip";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-                
-                bulkStatus.textContent = `Klaar! ${Object.keys(zip.files).length} QR-codes gedownload.`;
-                bulkStatus.className = "text-xs font-medium text-green-600 mt-1";
-            } catch(e) {
-                console.error(e);
-                bulkStatus.textContent = "Fout bij maken ZIP.";
-                bulkStatus.className = "text-xs font-medium text-red-600 mt-1";
-            }
-
             bulkGenerateBtn.disabled = false;
             bulkGenerateBtn.innerHTML = '<i class="fa-solid fa-file-zipper"></i> ZIP Downloaden';
         });
